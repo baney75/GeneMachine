@@ -1,0 +1,57 @@
+# Raw genotypes and variant files
+*.vcf
+*.vcf.gz
+*.gvcf
+*.g.vcf
+*.bcf
+*.23andme
+
+# Sequencing and alignment data
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.cram
+*.crai
+*.sam
+
+# Genotyping and methylation data
+*.bed
+*.bim
+*.fam
+*.ped
+*.map
+*.idat
+*.idat.gz
+
+# Per-person outputs and reports
+output/
+outputs/
+reports/
+results/
+work/
+tmp/
+*.pdf
+*.html
+*.jsonl
+*.sqlite
+*.db
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*
+secrets*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
