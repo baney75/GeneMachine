@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">GeneMachine</title>
+  <desc id="desc">GeneMachine social card with its DNA and precision-machine mark.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#09111F"/>
+      <stop offset="1" stop-color="#101F38"/>
+    </linearGradient>
+    <linearGradient id="signal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#56E0C5"/>
+      <stop offset="1" stop-color="#6A8CFF"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" rx="36" fill="url(#background)"/>
+  <path d="M0 512C240 430 400 594 640 512s400-82 640 0v128H0z" fill="#0C182B"/>
+  <circle cx="245" cy="304" r="184" fill="#56E0C5" opacity=".08" filter="url(#glow)"/>
+
+  <g transform="translate(55 95)">
+    <rect width="420" height="420" rx="100" fill="#0C1728" stroke="#20324D" stroke-width="3"/>
+    <circle cx="210" cy="210" r="135" fill="none" stroke="#20324D" stroke-width="23" stroke-dasharray="40 17"/>
+    <path d="M143 102c92 47 43 166 134 216M277 102c-92 47-43 166-134 216"
+          fill="none" stroke="url(#signal)" stroke-width="25" stroke-linecap="round"/>
+    <g stroke="#F5F8FF" stroke-width="14" stroke-linecap="round">
+      <path d="M157 139h106"/>
+      <path d="M144 181h132"/>
+      <path d="M144 239h132"/>
+      <path d="M157 281h106"/>
+    </g>
+    <circle cx="210" cy="210" r="27" fill="#09111F" stroke="#56E0C5" stroke-width="12"/>
+  </g>
+
+  <g transform="translate(545 135)">
+    <text x="0" y="82" fill="#F5F8FF" font-size="92" font-weight="760"
+          font-family="Inter, ui-sans-serif, system-ui, sans-serif">GeneMachine</text>
+    <rect x="2" y="112" width="112" height="7" rx="3.5" fill="#56E0C5"/>
+    <rect x="122" y="112" width="68" height="7" rx="3.5" fill="#6A8CFF"/>
+    <text x="2" y="173" fill="#B9C8E0" font-size="31"
+          font-family="Inter, ui-sans-serif, system-ui, sans-serif">Evidence in. Action out.</text>
+    <text x="2" y="214" fill="#B9C8E0" font-size="31"
+          font-family="Inter, ui-sans-serif, system-ui, sans-serif">Uncertainty visible.</text>
+
+    <g transform="translate(2 268)" font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+      <rect width="150" height="48" rx="24" fill="#132844" stroke="#2D466A"/>
+      <text x="75" y="31" fill="#F5F8FF" font-size="18" text-anchor="middle">ASSAY + QC</text>
+      <rect x="165" width="173" height="48" rx="24" fill="#132844" stroke="#2D466A"/>
+      <text x="251.5" y="31" fill="#F5F8FF" font-size="18" text-anchor="middle">CITED EVIDENCE</text>
+      <rect x="353" width="174" height="48" rx="24" fill="#132844" stroke="#2D466A"/>
+      <text x="440" y="31" fill="#F5F8FF" font-size="18" text-anchor="middle">ACTION-FIRST PDF</text>
+    </g>
+  </g>
+
+  <g transform="translate(545 525)">
+    <circle cx="14" cy="14" r="14" fill="#56E0C5"/>
+    <path d="M8 14l4 4 8-9" fill="none" stroke="#09111F" stroke-width="3.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="42" y="21" fill="#8FA6C7" font-size="21"
+          font-family="Inter, ui-sans-serif, system-ui, sans-serif">RAW DNA STAYS LOCAL BY DEFAULT</text>
+  </g>
+</svg>
