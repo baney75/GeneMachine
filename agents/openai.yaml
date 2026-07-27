@@ -1,0 +1,9 @@
+interface:
+  display_name: "GeneMachine"
+  short_description: "Evidence-first DNA analysis and cited PDFs"
+  icon_small: "./assets/logo.svg"
+  icon_large: "./assets/wordmark.svg"
+  brand_color: "#56E0C5"
+  default_prompt: "Use $genemachine to analyze this genomic dataset locally and create an action-first cited PDF with explicit uncertainty and safeguards."
+policy:
+  allow_implicit_invocation: true
