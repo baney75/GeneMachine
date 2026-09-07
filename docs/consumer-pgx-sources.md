@@ -1,11 +1,13 @@
 # Consumer pharmacogenetics source register
 
-Evidence reviewed on 2026-09-06. These sources support the local app's onboarding, one exact-marker evidence lane, and safety language. They do not clinically validate GeneMachine or a medication interpretation engine.
+Evidence reviewed through 2026-09-07. These sources support the local app's onboarding, one exact-marker evidence lane, and safety language. They do not clinically validate GeneMachine or a medication interpretation engine.
 
 | Source | What GeneMachine uses it for |
 | --- | --- |
 | [23andMe: Accessing Your Raw Genetic Data](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-Your-Raw-Genetic-Data) | Current first-party path to browse and download a customer's raw genotyping data. |
 | [Ancestry: Downloading DNA Data](https://support.ancestry.com/s/article/Downloading-DNA-Data) | Current first-party download help page linked from onboarding. The page may require regional selection or client-side scripts. |
+| [23andMe: Which Reference Genome and Strand Does 23andMe Use?](https://customercare.23andme.com/hc/en-us/articles/212883767-Which-Reference-Genome-and-Strand-Does-23andMe-Use) | Current first-party confirmation that 23andMe reports genotypes on the positive strand of the specified reference assembly. It does not promise one exact raw-export header sentence. |
+| [Ancestry: Reading your DNA Data](https://support.ancestry.com/s/article/Downloading-DNA-Data#reading) | Current first-party confirmation that AncestryDNA reports raw genotypes on the genomic forward strand with respect to GRCh37. It does not promise one exact raw-export header line wrap. |
 | [AncestryDNA kit page](https://www.ancestry.com/dna/) | First-party page for current kit and bundle options. GeneMachine does not copy a sale price because pricing, renewal terms, and bundles change. |
 | [23andMe DNA Test Kit Service Options](https://customercare.23andme.com/hc/en-us/articles/202908020-23andMe-DNA-Test-Kit-Service-Options) | First-party comparison of current service tiers. It states that ancestry services include access to a raw, uninterpreted file and that the file must not be used for medical or diagnostic purposes. |
 | [H600 Microarray File Formats](https://wiki.h600.org/Microarray%2BFile%2BFormats) | Technical format reference for provider-generated raw files. It documents AncestryDNA's numeric non-autosomal encoding: 23 = X, 24 = Y, 25 = X/Y pseudoautosomal region, and 26 = mitochondrial. GeneMachine applies this mapping only when the file identifies itself as AncestryDNA. |
@@ -21,10 +23,12 @@ Evidence reviewed on 2026-09-06. These sources support the local app's onboardin
 
 ## Dated provider/file support matrix
 
+The exact header sentences in the synthetic fixtures are legacy interoperability examples corroborated by the H600 format archive and historical exports. Current first-party provider documentation confirms the strand semantics, but does not promise that exact header serialization for every current export. GeneMachine never infers orientation from a provider name alone; a recognized declaration must be present in the file itself.
+
 | Source / layout | Import support | Interpretation support | Known boundaries |
 | --- | --- | --- | --- |
-| 23andMe tab-separated raw text | Yes, when the expected header/columns are present | SLCO1B1 rs4149056 exact-marker observation only when build 37/38, explicit forward/plus orientation, expected coordinate, unambiguous genotype, and no conflicting duplicate are present | Consumer microarray; not comprehensive sequencing or clinical PGx. 23andMe says only a subset of raw markers is individually validated and the raw data is informational. |
-| AncestryDNA split-allele tab-separated text | Yes, including provider-specific chromosome codes | Same narrow exact-marker gate; ambiguous strand/orientation abstains | Consumer microarray; array version and exported markers can vary. Missing marker means unknown. |
+| 23andMe tab-separated raw text | Yes, when the expected header/columns are present, including the legacy wrapped plus-strand statement | SLCO1B1 rs4149056 exact-marker observation only when build 37/38, a recognized plus-strand statement, expected coordinate, unambiguous genotype, and no conflicting duplicate are present | Consumer microarray; not comprehensive sequencing or clinical PGx. 23andMe says only a subset of raw markers is individually validated and the raw data is informational. |
+| AncestryDNA split-allele tab-separated text | Yes, including provider-specific chromosome codes and the historical two-line forward-strand statement | Same narrow exact-marker gate; ambiguous, qualified, or conflicting strand/orientation language anywhere in the header abstains | Consumer microarray; array version and exported markers can vary. Missing marker means unknown. |
 | Generic `.txt`, `.tsv`, or `.csv` genotype table | Technical import when core columns are recognized | Abstains unless the file explicitly declares a supported build and forward/plus orientation | Provider/assay provenance may be insufficient even when rows parse. |
 | ZIP/GZIP archive | No | No | Extract locally first. Archives are never uploaded or opened in the app. |
 | VCF/gVCF, sequencing, BAM/CRAM/FASTQ, methylation, multi-sample table | No in this browser candidate | No | Requires a separate reference-aware validated workflow and, for complex PGx, required-position, phase, copy-number, and structural-variant handling. |

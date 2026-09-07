@@ -70,6 +70,21 @@ async function verifyBrowser(browserType, baseUrl) {
   await page.keyboard.press(advanceFocus);
   assert.equal(await page.evaluate(() => document.activeElement?.id), "demo-button");
 
+  for (const fileName of [
+    "ancestry-full-header-grch37-forward.tsv",
+    "23andme-full-header-grch37-plus.tsv",
+  ]) {
+    await page.locator("#file-input").setInputFiles(path.join(root, "samples", "reference", fileName));
+    await page.locator("#results:not([hidden])").waitFor();
+    assert.equal((await page.locator("#finding-badge").innerText()).trim(), "OBSERVATION SUPPORTED", `${browserType.name()} ${fileName}`);
+    assert.match(await page.locator("#evidence-ladder").innerText(), /rs4149056 T\/C/, `${browserType.name()} ${fileName}`);
+  }
+
+  await page.locator("#file-input").setInputFiles(path.join(root, "samples", "reference", "ancestry-full-header-wrapped-conflict.tsv"));
+  await page.locator("#results:not([hidden])").waitFor();
+  assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", `${browserType.name()} wrapped ambiguity`);
+  assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, `${browserType.name()} wrapped ambiguity`);
+
   await page.locator("#file-input").setInputFiles({
     name: "ancestry-explicit-forward-plus.txt",
     mimeType: "text/plain",
@@ -80,6 +95,60 @@ async function verifyBrowser(browserType, baseUrl) {
   assert.match(await page.locator("#evidence-ladder").innerText(), /rs4149056 T\/C/);
   const providerUncertainty = await page.locator("#warning-list").innerText();
   assert.match(providerUncertainty, /Analytical and clinical confirmation are outside this software's validated scope/);
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.locator("#export-button").click();
+  const download = await downloadPromise;
+  assert.equal(download.suggestedFilename(), "genemachine-discussion-report.html");
+  const downloadedPath = await download.path();
+  const downloadedHtml = await fs.readFile(downloadedPath, "utf8");
+  const reportPage = await context.newPage();
+  await reportPage.setViewportSize({ width: 390, height: 844 });
+  await reportPage.setContent(downloadedHtml, { waitUntil: "load" });
+  const phoneReport = await reportPage.evaluate(() => {
+    const hashCell = [...document.querySelectorAll(".meta div")].find((element) => element.querySelector("span")?.textContent === "LOCAL INPUT SHA-256");
+    const hash = hashCell ? [...hashCell.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE).map((node) => node.textContent).join("").trim() : "";
+    return {
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      hash,
+      hashSelectable: hashCell ? getComputedStyle(hashCell).userSelect !== "none" : false,
+    };
+  });
+  assert.equal(phoneReport.scrollWidth, phoneReport.clientWidth, `${browserType.name()} report overflowed at 390px`);
+  assert.match(phoneReport.hash, /^[a-f0-9]{64}$/, `${browserType.name()} report did not preserve the full SHA-256`);
+  assert.equal(phoneReport.hashSelectable, true, `${browserType.name()} report hash was not selectable`);
+
+  await reportPage.setViewportSize({ width: 720, height: 900 });
+  await reportPage.evaluate(() => { document.documentElement.style.zoom = "2"; });
+  const zoomedReport = await reportPage.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  assert.equal(zoomedReport.scrollWidth, zoomedReport.clientWidth, `${browserType.name()} report overflowed at 200% zoom / 720px`);
+
+  await reportPage.evaluate(() => { document.documentElement.style.zoom = "1"; });
+  await reportPage.setViewportSize({ width: 1280, height: 900 });
+  const desktopReport = await reportPage.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    mainWidth: document.querySelector("main").getBoundingClientRect().width,
+  }));
+  assert.equal(desktopReport.scrollWidth, desktopReport.clientWidth, `${browserType.name()} report overflowed on desktop`);
+  assert.ok(desktopReport.mainWidth <= 820, `${browserType.name()} report exceeded its desktop reading measure`);
+
+  await reportPage.emulateMedia({ media: "print" });
+  const printReport = await reportPage.evaluate(() => ({
+    bodyBackground: getComputedStyle(document.body).backgroundColor,
+    mainShadow: getComputedStyle(document.querySelector("main")).boxShadow,
+    metaBreak: getComputedStyle(document.querySelector(".meta")).breakInside,
+    headings: [...document.querySelectorAll("h1,h2")].every((heading) => heading.getBoundingClientRect().height > 0),
+  }));
+  assert.equal(printReport.bodyBackground, "rgb(255, 255, 255)", `${browserType.name()} report print background`);
+  assert.equal(printReport.mainShadow, "none", `${browserType.name()} report print shadow`);
+  assert.equal(printReport.metaBreak, "avoid", `${browserType.name()} report metadata print break`);
+  assert.equal(printReport.headings, true, `${browserType.name()} report print headings`);
+  await reportPage.close();
 
   await page.locator("#reset-button").click();
   await page.locator("#demo-button").click();
@@ -204,7 +273,17 @@ async function verifyBrowser(browserType, baseUrl) {
   assert.ok(requests.every((url) => new URL(url).hostname === "127.0.0.1"));
 
   await browser.close();
-  return { browser: browserType.name(), focusTrace, reflow720 };
+  return {
+    browser: browserType.name(),
+    downloadedReport: {
+      phone: { clientWidth: phoneReport.clientWidth, scrollWidth: phoneReport.scrollWidth, hashLength: phoneReport.hash.length, hashSelectable: phoneReport.hashSelectable },
+      zoom200: zoomedReport,
+      desktop: desktopReport,
+      print: printReport,
+    },
+    focusTrace,
+    reflow720,
+  };
 }
 
 (async () => {

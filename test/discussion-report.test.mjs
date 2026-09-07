@@ -26,4 +26,8 @@ test("exports the supported summary without the original filename or raw rows", 
   assert.doesNotMatch(html, new RegExp(secretFileName));
   assert.doesNotMatch(html, /# Forward strand/);
   assert.doesNotMatch(html, /rsid\s+chromosome\s+position/);
+  assert.match(html, new RegExp(`LOCAL INPUT SHA-256</span>${"a".repeat(64)}`));
+  assert.match(html, /grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
+  assert.match(html, /overflow-wrap:anywhere/);
+  assert.match(html, /break-inside:avoid/);
 });
