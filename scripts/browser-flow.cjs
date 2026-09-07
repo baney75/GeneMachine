@@ -80,6 +80,22 @@ async function verifyBrowser(browserType, baseUrl) {
     assert.match(await page.locator("#evidence-ladder").innerText(), /rs4149056 T\/C/, `${browserType.name()} ${fileName}`);
   }
 
+  for (const fileName of [
+    "ancestry-full-header-grch37-forward.tsv",
+    "23andme-full-header-grch37-plus.tsv",
+  ]) {
+    const source = await fs.readFile(path.join(root, "samples", "reference", fileName), "utf8");
+    const withStandaloneUnverified = source.replace(/\n(?=rsid\t)/, "\n# unverified\n");
+    await page.locator("#file-input").setInputFiles({
+      name: `unverified-${fileName}`,
+      mimeType: "text/tab-separated-values",
+      buffer: Buffer.from(withStandaloneUnverified),
+    });
+    await page.locator("#results:not([hidden])").waitFor();
+    assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", `${browserType.name()} standalone unverified ${fileName}`);
+    assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, `${browserType.name()} standalone unverified ${fileName}`);
+  }
+
   await page.locator("#file-input").setInputFiles(path.join(root, "samples", "reference", "ancestry-full-header-wrapped-conflict.tsv"));
   await page.locator("#results:not([hidden])").waitFor();
   assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", `${browserType.name()} wrapped ambiguity`);
