@@ -38,7 +38,7 @@ Or copy this repository into your client’s skills directory. The repository ro
 
 ## Try the local consumer-DNA evidence explorer
 
-The browser app recognizes common tab- or comma-separated ASCII raw-genotype layouts, checks basic file quality, maps chromosome rows, and shows why a pharmacogenetic claim proceeds or stops. A leading UTF-8 byte-order mark is accepted; other non-ASCII or invisible formatting is rejected because it can hide safety-relevant header evidence. It contains one narrow evidence path for the SLCO1B1 marker rs4149056. That path reports an exact row only after the declared build, forward strand, pinned coordinate, allele alphabet, no-call state, and duplicate state agree.
+The browser app recognizes common tab- or comma-separated ASCII raw-genotype layouts, checks basic file quality, maps chromosome rows, and shows why a pharmacogenetic claim proceeds or stops. A leading UTF-8 byte-order mark and CRLF line endings are accepted. Other non-ASCII or non-printing formatting is rejected because it can hide safety-relevant header evidence; tabs are accepted as table delimiters but rejected inside prose comments. It contains one narrow evidence path for the SLCO1B1 marker rs4149056. That path reports an exact row only after the declared build, forward strand, pinned coordinate, allele alphabet, no-call state, and duplicate state agree.
 
 ```bash
 npm start

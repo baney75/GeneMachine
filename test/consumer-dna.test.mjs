@@ -234,8 +234,15 @@ test("does not hide late or post-column strand contradictions", () => {
 test("rejects invisible or non-ASCII Unicode before it can hide orientation evidence", () => {
   const zeroWidthPrefix = `# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n\u200B# reverse strand\nrs4149056\t12\t21331549\tTC`;
   const zeroWidthWords = `# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n# rev\u200Berse str\u200Band\nrs4149056\t12\t21331549\tTC`;
-  assert.throws(() => parseConsumerDna(zeroWidthPrefix, "zero-width-prefix.tsv"), /non-ASCII or invisible Unicode formatting/);
-  assert.throws(() => parseConsumerDna(zeroWidthWords, "zero-width-words.tsv"), /non-ASCII or invisible Unicode formatting/);
+  assert.throws(() => parseConsumerDna(zeroWidthPrefix, "zero-width-prefix.tsv"), /unsupported non-printing or non-ASCII formatting/);
+  assert.throws(() => parseConsumerDna(zeroWidthWords, "zero-width-words.tsv"), /unsupported non-printing or non-ASCII formatting/);
+
+  const embeddedCarriageReturns = `# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n# rev\rerse str\rand\nrs4149056\t12\t21331549\tTC`;
+  const embeddedCommentTabs = `# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n# rev\terse str\tand\nrs4149056\t12\t21331549\tTC`;
+  const disguisedColumnComment = `# build 37\n# forward strand\n# rsid\tchromosome\tposition\tgenotype\treverse strand\nrs4149056\t12\t21331549\tTC`;
+  assert.throws(() => parseConsumerDna(embeddedCarriageReturns, "embedded-cr.tsv"), /unsupported non-printing or non-ASCII formatting/);
+  assert.throws(() => parseConsumerDna(embeddedCommentTabs, "embedded-comment-tabs.tsv"), /unsupported non-printing or non-ASCII formatting/);
+  assert.throws(() => parseConsumerDna(disguisedColumnComment, "disguised-column-comment.tsv"), /unsupported non-printing or non-ASCII formatting/);
 
   const leadingBom = parseConsumerDna(`\uFEFF${supportedHeader}\nrs4149056\t12\t21331549\tTC`, "leading-bom.tsv");
   assert.equal(leadingBom.orientation.value, "forward");
