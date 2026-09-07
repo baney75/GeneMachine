@@ -70,9 +70,21 @@ async function verifyBrowser(browserType, baseUrl) {
   await page.keyboard.press(advanceFocus);
   assert.equal(await page.evaluate(() => document.activeElement?.id), "demo-button");
 
-  await page.keyboard.press("Enter");
+  await page.locator("#file-input").setInputFiles({
+    name: "ancestry-explicit-forward-plus.txt",
+    mimeType: "text/plain",
+    buffer: syntheticFixture,
+  });
   await page.locator("#results:not([hidden])").waitFor();
   assert.equal((await page.locator("#finding-badge").innerText()).trim(), "OBSERVATION SUPPORTED");
+  assert.match(await page.locator("#evidence-ladder").innerText(), /rs4149056 T\/C/);
+  const providerUncertainty = await page.locator("#warning-list").innerText();
+  assert.match(providerUncertainty, /Analytical and clinical confirmation are outside this software's validated scope/);
+
+  await page.locator("#reset-button").click();
+  await page.locator("#demo-button").click();
+  await page.locator("#results:not([hidden])").waitFor();
+  assert.equal(await page.locator("#warning-list").innerText(), providerUncertainty);
 
   const focusTrace = [];
   for (let index = 0; index < 12; index += 1) {
