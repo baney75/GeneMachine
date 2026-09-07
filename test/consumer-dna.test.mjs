@@ -200,6 +200,14 @@ test("treats invalid orientation evidence anywhere in a multi-line header as a g
     [`not ${"filler ".repeat(16)}forward strand`],
     ["perhaps forward strand"],
     ["unknown", "forward strand"],
+    ["forward strand?"],
+    ["unverified forward strand"],
+    ["forward strand remains unverified"],
+    ["tentative forward strand"],
+    ["provisional forward strand"],
+    ["likely forward strand"],
+    ["probably forward strand"],
+    ["+ strand; provisional"],
   ]) {
     const report = parseConsumerDna(`# build 37\n${comments.map((comment) => `# ${comment}`).join("\n")}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, "ambiguous-orientation.tsv");
     assert.equal(report.orientation.value, null, comments.join(" / "));

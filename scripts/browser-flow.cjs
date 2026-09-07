@@ -130,6 +130,14 @@ async function verifyBrowser(browserType, baseUrl) {
     [`not ${"filler ".repeat(16)}forward strand`],
     ["perhaps forward strand"],
     ["unknown", "forward strand"],
+    ["forward strand?"],
+    ["unverified forward strand"],
+    ["forward strand remains unverified"],
+    ["tentative forward strand"],
+    ["provisional forward strand"],
+    ["likely forward strand"],
+    ["probably forward strand"],
+    ["+ strand; provisional"],
   ].entries()) {
     const ambiguousFixture = Buffer.from(`# Synthetic fixture; no person\n# AncestryDNA raw data\n# build 37\n${comments.map((comment) => `# ${comment}`).join("\n")}\nrsid\tchromosome\tposition\tallele1\tallele2\nrs4149056\t12\t21331549\tT\tC`);
     await page.locator("#file-input").setInputFiles({
