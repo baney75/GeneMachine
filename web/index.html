@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Inspect consumer DNA locally, see whether one narrow pharmacogenetic marker is technically supportable, and export a source-backed clinician discussion report.">
+    <meta name="theme-color" content="#07111f">
+    <meta property="og:title" content="GeneMachine: evidence before interpretation">
+    <meta property="og:description" content="A local-first consumer DNA capability check with visible scientific abstention.">
+    <meta property="og:type" content="website">
+    <title>GeneMachine: evidence before interpretation</title>
+    <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to analysis</a>
+    <header class="site-header" aria-label="GeneMachine header">
+      <a class="brand" href="#top" aria-label="GeneMachine home">
+        <img src="../assets/logo.svg" alt="" width="42" height="42">
+        <span>GeneMachine</span>
+      </a>
+      <span class="privacy-pill"><b>LOCAL</b> This browser only</span>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-copy-block">
+          <div class="eyebrow">CONSUMER DNA / PHARMACOGENETICS</div>
+          <h1 id="hero-title">Find the evidence.<br><em>Keep the uncertainty.</em></h1>
+          <p class="hero-copy">GeneMachine checks a raw AncestryDNA, 23andMe, or compatible genotype file on your device. It shows what the file can support, what remains unknown, and one careful question to take to a clinician.</p>
+          <ol class="journey-rail" aria-label="GeneMachine workflow">
+            <li><span>01</span>Get a file</li>
+            <li><span>02</span>Set privacy</li>
+            <li><span>03</span>Check evidence</li>
+            <li><span>04</span>Export a question</li>
+          </ol>
+        </div>
+
+        <aside class="import-card" id="import-card" aria-labelledby="import-title">
+          <div class="card-index" aria-hidden="true">01 / LOCAL INTAKE</div>
+          <h2 id="import-title">Begin without sending your DNA anywhere.</h2>
+          <p class="privacy-summary">No account. No analytics. No browser storage. The raw text is released from memory after parsing; reset clears the derived result.</p>
+          <label class="consent-row" for="consent-checkbox">
+            <input id="consent-checkbox" type="checkbox">
+            <span><strong>I understand the boundary</strong><small>This is educational exploration, not a clinical test or medication instruction.</small></span>
+          </label>
+          <input id="file-input" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv" class="visually-hidden" disabled>
+          <label for="file-input" class="drop-zone is-disabled" id="drop-zone" aria-describedby="file-help" tabindex="0">
+            <span class="drop-title">Choose a raw DNA file</span>
+            <span class="drop-help" id="file-help">Plain .txt, .csv, or .tsv, up to 80 MB</span>
+          </label>
+          <div class="action-row">
+            <button class="primary-button" id="demo-button" type="button">Explore the synthetic example</button>
+            <button class="quiet-button" id="cancel-button" type="button" hidden>Cancel read</button>
+          </div>
+          <p class="microcopy">Compressed files must be extracted locally first. Never use a shared computer for a private genome export.</p>
+          <div class="progress-line" id="progress-line" hidden><span id="progress-value"></span></div>
+        </aside>
+      </section>
+
+      <section class="results" id="results" aria-live="polite" hidden>
+        <header class="results-heading">
+          <div>
+            <div class="eyebrow" id="result-kicker">FILE UNDERSTOOD</div>
+            <h2 id="result-title">Local DNA file</h2>
+            <p id="result-summary" class="result-summary"></p>
+          </div>
+          <div class="results-actions">
+            <button id="export-button" class="primary-button" type="button">Download discussion report</button>
+            <button id="reset-button" class="danger-quiet-button" type="button">Clear this DNA now</button>
+          </div>
+        </header>
+
+        <div class="status-banner" id="status-banner">
+          <div><strong id="status-title">Technical import complete</strong><span id="status-detail"></span></div>
+        </div>
+
+        <div class="provenance-strip" aria-label="Local provenance">
+          <div><span>INPUT</span><strong id="provenance-input">Local file</strong></div>
+          <div><span>SHA-256</span><strong id="provenance-hash">Calculating</strong></div>
+          <div><span>RETENTION</span><strong>Memory only</strong></div>
+          <div><span>NETWORK</span><strong>None required</strong></div>
+        </div>
+
+        <div class="metric-grid" id="metric-grid"></div>
+
+        <div class="dashboard-grid">
+          <article class="panel chromosome-panel">
+            <div class="panel-heading">
+              <div><span class="panel-label">OBSERVED COVERAGE</span><h3>Rows by chromosome</h3></div>
+              <span class="synthetic-badge" id="synthetic-badge" hidden>SYNTHETIC / NOT A PERSON</span>
+            </div>
+            <div class="chromosome-chart" id="chromosome-chart" role="img" tabindex="0" aria-label="Variant rows by chromosome" aria-describedby="chart-note"></div>
+            <p class="chart-note" id="chart-note">Bar height shows rows in this file, not whole-gene or clinical coverage.</p>
+          </article>
+
+          <article class="panel readiness-panel">
+            <span class="panel-label">TECHNICAL GATES</span>
+            <h3>Before interpretation</h3>
+            <div id="readiness-checks" class="check-list"></div>
+          </article>
+        </div>
+
+        <article class="panel evidence-panel" aria-labelledby="evidence-title">
+          <div class="evidence-intro">
+            <div>
+              <span class="panel-label">ONE NARROW PGX LANE</span>
+              <h3 id="evidence-title">SLCO1B1 c.521T&gt;C / rs4149056</h3>
+            </div>
+            <span class="finding-badge" id="finding-badge">CHECKING</span>
+          </div>
+          <p id="finding-lede" class="finding-lede"></p>
+          <ol class="evidence-ladder" id="evidence-ladder"></ol>
+          <div class="discussion-prompt">
+            <div><span>DISCUSSION, NOT DIRECTION</span><p id="clinician-discussion"></p></div>
+          </div>
+          <div class="source-links">
+            <a href="https://files.cpicpgx.org/data/guideline/publication/statins/2022/publication.pdf" target="_blank" rel="noreferrer">2022 CPIC guideline</a>
+            <a href="https://www.fda.gov/medical-devices/precision-medicine/table-pharmacogenetic-associations" target="_blank" rel="noreferrer">FDA association table</a>
+            <a href="https://www.clinpgx.org/variant/PA166154579" target="_blank" rel="noreferrer">ClinPGx variant record</a>
+            <a href="https://www.pharmvar.org/gene/SLCO1B1" target="_blank" rel="noreferrer">PharmVar definitions</a>
+          </div>
+        </article>
+
+        <article class="panel capability-panel">
+          <div class="panel-heading">
+            <div><span class="panel-label">CAPABILITY MAP</span><h3>Unavailable means unavailable</h3></div>
+          </div>
+          <div class="capability-grid" id="capability-grid"></div>
+        </article>
+
+        <article class="panel warnings-panel">
+          <span class="panel-label">VISIBLE UNCERTAINTY</span>
+          <h3>Limits carried into the report</h3>
+          <ul id="warning-list"></ul>
+        </article>
+      </section>
+
+      <section class="how-to" aria-labelledby="download-title">
+        <div class="section-copy">
+          <div class="eyebrow">GET YOUR FILE / $0 FIRST</div>
+          <h2 id="download-title">Start with data you already own.</h2>
+          <p>Download paths change. These first-party pages were reviewed September 6, 2026. Follow the provider's identity checks and move the archive to private storage before extracting it.</p>
+        </div>
+        <div class="provider-grid">
+          <a class="provider-card" href="https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-Your-Raw-Genetic-Data" target="_blank" rel="noreferrer"><span>23</span><div><strong>23andMe</strong><small>Official raw-data instructions</small></div></a>
+          <a class="provider-card" href="https://support.ancestry.com/s/article/Downloading-DNA-Data" target="_blank" rel="noreferrer"><span>A</span><div><strong>AncestryDNA</strong><small>Official download instructions</small></div></a>
+        </div>
+      </section>
+
+      <section class="buying-guide" aria-labelledby="buying-title">
+        <div class="buying-heading">
+          <div class="eyebrow">NO SUITABLE FILE?</div>
+          <h2 id="buying-title">Know what you are paying to measure.</h2>
+          <p>A cheap ancestry array may still omit the gene, phase, copy-number, or structural evidence a medication question needs.</p>
+        </div>
+        <div class="buying-grid">
+          <article><span>FIRST</span><h3>Use an existing export</h3><p>The readiness check is free and local. A new kit is unnecessary if your current file answers the technical question.</p></article>
+          <article><span>U.S. SNAPSHOT / 2026-09-06</span><h3>AncestryDNA listed at $99</h3><p>The official comparison page listed the base kit at $99 before tax and shipping; standard first-kit U.S. shipping was listed at $9.95. Promotions, subscriptions, and checkout totals change.</p><a href="https://www.ancestry.com/c/dna/compare-ancestry-dna-test-kits?geo-lang=en" target="_blank" rel="noreferrer">Verify current price</a></article>
+          <article><span>FOR A MEDICATION DECISION</span><h3>Ask for the required assay</h3><p>A consumer array is not comprehensive clinical PGx. Ask a prescriber, pharmacist, or qualified laboratory which loci and call types need confirmation.</p></article>
+        </div>
+      </section>
+
+      <section class="safety-note" aria-labelledby="safety-title">
+        <div class="safety-mark" aria-hidden="true">Rx</div>
+        <div>
+          <div class="eyebrow">MEDICATION SAFETY</div>
+          <h2 id="safety-title">A better question is the result.</h2>
+          <p>Do not start, stop, substitute, or change a dose from this tool. CPIC explains how confirmed results may inform care; the FDA says consumers should discuss pharmacogenetic results with a health professional and may need clinical confirmation.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>GeneMachine / local evidence explorer</span>
+      <span>Educational and research support / not a medical device</span>
+    </footer>
+    <div class="toast" id="error-toast" role="alert" hidden></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

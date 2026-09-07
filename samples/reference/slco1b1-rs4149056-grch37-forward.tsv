@@ -1,0 +1,6 @@
+# GeneMachine synthetic exact-marker reference fixture
+# Contains no real person's data and is not a clinical validation sample
+# Genome build 37
+# Forward strand
+rsid	chromosome	position	genotype
+rs4149056	12	21331549	TC

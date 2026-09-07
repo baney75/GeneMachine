@@ -39,6 +39,10 @@ tmp/
 *.sqlite
 *.db
 
+# The reviewable local app is source, not a per-person report.
+!web/
+!web/*.html
+
 # Secrets and local environment
 .env
 .env.*

@@ -4,7 +4,7 @@ description: Analyze personal DNA and genomic files with privacy-first quality c
 license: Apache-2.0
 metadata:
   author: GeneMachine contributors
-  version: "2.0.0-public"
+  version: "2.1.0-public"
   maturity: pro
 ---
 
