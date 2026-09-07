@@ -96,6 +96,17 @@ async function verifyBrowser(browserType, baseUrl) {
     assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, `${browserType.name()} standalone unverified ${fileName}`);
   }
 
+  const nounFirstSymbolConflict = Buffer.from("# Synthetic fixture with no person\n# build 37\n# orientation: +; orientation: -\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC");
+  await page.locator("#file-input").setInputFiles({
+    name: "noun-first-symbol-conflict.tsv",
+    mimeType: "text/tab-separated-values",
+    buffer: nounFirstSymbolConflict,
+  });
+  await page.locator("#results:not([hidden])").waitFor();
+  assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", `${browserType.name()} noun-first symbol conflict`);
+  assert.match(await page.locator("#metric-grid").innerText(), /Orientation\s+Unverified/i, `${browserType.name()} noun-first symbol conflict orientation`);
+  assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, `${browserType.name()} noun-first symbol conflict stop`);
+
   await page.locator("#file-input").setInputFiles(path.join(root, "samples", "reference", "ancestry-full-header-wrapped-conflict.tsv"));
   await page.locator("#results:not([hidden])").waitFor();
   assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", `${browserType.name()} wrapped ambiguity`);
