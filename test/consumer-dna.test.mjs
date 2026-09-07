@@ -231,6 +231,17 @@ test("does not hide late or post-column strand contradictions", () => {
   );
 });
 
+test("rejects invisible or non-ASCII Unicode before it can hide orientation evidence", () => {
+  const zeroWidthPrefix = `# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n\u200B# reverse strand\nrs4149056\t12\t21331549\tTC`;
+  const zeroWidthWords = `# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n# rev\u200Berse str\u200Band\nrs4149056\t12\t21331549\tTC`;
+  assert.throws(() => parseConsumerDna(zeroWidthPrefix, "zero-width-prefix.tsv"), /non-ASCII or invisible Unicode formatting/);
+  assert.throws(() => parseConsumerDna(zeroWidthWords, "zero-width-words.tsv"), /non-ASCII or invisible Unicode formatting/);
+
+  const leadingBom = parseConsumerDna(`\uFEFF${supportedHeader}\nrs4149056\t12\t21331549\tTC`, "leading-bom.tsv");
+  assert.equal(leadingBom.orientation.value, "forward");
+  assert.equal(evaluateSlco1b1ExactMarker(leadingBom).status, "supported_observation");
+});
+
 test("recognizes bounded symbolic declarations without inferring an unidentified orientation", () => {
   for (const declaration of ["+ strand", "orientation: +", "(+) strand"]) {
     const report = parseConsumerDna(`# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, `${declaration}.tsv`);

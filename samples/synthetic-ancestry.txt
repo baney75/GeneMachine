@@ -1,4 +1,4 @@
-# GeneMachine synthetic fixture — no real person or biological interpretation
+# GeneMachine synthetic fixture - no real person or biological interpretation
 # AncestryDNA raw data style
 # Data uses genome build 37
 # The genotype is reported on the forward (+) strand with respect to the human reference.
