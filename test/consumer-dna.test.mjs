@@ -216,6 +216,21 @@ test("treats invalid orientation evidence anywhere in a multi-line header as a g
   }
 });
 
+test("does not hide late or post-column strand contradictions", () => {
+  const lateContradiction = parseConsumerDna(`# build 37\n# forward strand\n# ${"x".repeat(510)} reverse strand\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, "late-contradiction.tsv");
+  assert.equal(lateContradiction.orientation.value, null);
+  assert.equal(evaluateSlco1b1ExactMarker(lateContradiction).reasonCode, "missing_or_unsupported_orientation");
+
+  const postColumnContradiction = parseConsumerDna(`# build 37\n# forward strand\nrsid\tchromosome\tposition\tgenotype\n# reverse strand\nrs4149056\t12\t21331549\tTC`, "post-column-contradiction.tsv");
+  assert.equal(postColumnContradiction.orientation.value, null);
+  assert.equal(evaluateSlco1b1ExactMarker(postColumnContradiction).reasonCode, "missing_or_unsupported_orientation");
+
+  assert.throws(
+    () => parseConsumerDna(`# ${"x".repeat(16_385)} forward strand\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, "oversized-header.tsv"),
+    /header is too large to verify build and strand orientation safely/i,
+  );
+});
+
 test("recognizes bounded symbolic declarations without inferring an unidentified orientation", () => {
   for (const declaration of ["+ strand", "orientation: +", "(+) strand"]) {
     const report = parseConsumerDna(`# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, `${declaration}.tsv`);

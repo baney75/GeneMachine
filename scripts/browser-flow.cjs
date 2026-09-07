@@ -149,6 +149,18 @@ async function verifyBrowser(browserType, baseUrl) {
     assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", comments.join(" / "));
     assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, comments.join(" / "));
   }
+  for (const [index, text] of [
+    `# Synthetic fixture; no person\n# AncestryDNA raw data\n# build 37\n# forward strand\n# ${"x".repeat(510)} reverse strand\nrsid\tchromosome\tposition\tallele1\tallele2\nrs4149056\t12\t21331549\tT\tC`,
+    "# Synthetic fixture; no person\n# AncestryDNA raw data\n# build 37\n# forward strand\nrsid\tchromosome\tposition\tallele1\tallele2\n# reverse strand\nrs4149056\t12\t21331549\tT\tC",
+  ].entries()) {
+    await page.locator("#file-input").setInputFiles({
+      name: `late-or-post-column-contradiction-${index}.txt`,
+      mimeType: "text/plain",
+      buffer: Buffer.from(text),
+    });
+    await page.locator("#results:not([hidden])").waitFor();
+    assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED");
+  }
   await page.locator("#demo-button").click();
   await page.locator("#results:not([hidden])").waitFor();
 
