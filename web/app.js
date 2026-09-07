@@ -45,6 +45,7 @@ function preferredScrollBehavior() {
 function updateConsentState() {
   const allowed = consentCheckbox.checked;
   fileInput.disabled = !allowed;
+  dropZone.disabled = !allowed;
   dropZone.classList.toggle("is-disabled", !allowed);
   dropZone.setAttribute("aria-disabled", String(!allowed));
 }
@@ -337,14 +338,7 @@ dropZone.addEventListener("drop", (event) => {
   if (file) inspectFile(file);
 });
 
-dropZone.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  event.preventDefault();
-  if (!consentCheckbox.checked) {
-    showError("Acknowledge the privacy and clinical boundary before choosing a DNA file.");
-    consentCheckbox.focus();
-    return;
-  }
+dropZone.addEventListener("click", () => {
   fileInput.click();
 });
 

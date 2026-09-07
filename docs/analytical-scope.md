@@ -24,7 +24,7 @@ VCF, gVCF, BAM, CRAM, FASTQ, methylation, compressed archives, and multi-sample 
 
 ## Verification performed
 
-The automated fixtures cover GRCh37 and GRCh38 exact-marker paths; missing locus; missing build; missing and reverse orientation; no-call; duplicate; conflicting duplicate; wrong coordinate; unexpected allele; malformed rows; unsupported chromosomes; VCF; multiple-sample headers; and configured size/row limits. The browser candidate is separately checked with synthetic fixtures for the visible journey, export, reset, network requests, and browser persistence.
+The automated fixtures cover GRCh37 and GRCh38 exact-marker paths; missing locus; missing build; missing and reverse orientation; no-call; duplicate; conflicting duplicate; wrong coordinate; unexpected allele; malformed rows; unsupported chromosomes; VCF; multiple-sample headers; and configured size/row limits. The repeatable Chromium and WebKit browser check covers the privacy acknowledgement, consent-gated native file button, keyboard focus path, synthetic result, local-only requests, empty browser storage, narrow layout, and 200% CSS-zoom stress test. Independent verification separately covers export, reset, meaningful failures, reduced motion, and performance.
 
 ## Known gaps before clinical use
 

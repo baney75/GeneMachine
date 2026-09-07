@@ -50,6 +50,14 @@ Parsing, hashing, and analysis happen in browser memory. The app does not use an
 
 This is not a star-allele caller, phenotype call, medication-response prediction, or dosing tool. Missing markers remain unknown. CYP2D6, HLA, phase, copy number, and structural variants remain unavailable. Run the checks with `npm test`.
 
+For the repeatable Chromium and WebKit journey check, install the development dependency and matching browser engines once, then run the browser script. It starts and stops its own loopback server.
+
+```bash
+npm install
+npx playwright install chromium webkit
+npm run test:browser
+```
+
 The [acceptance criteria](docs/acceptance-criteria.md) and [primary-source register](docs/consumer-pgx-sources.md) cover the exact scope, provider instructions, CPIC/ClinPGx/PharmVar context, FDA limits, and current U.S. acquisition facts.
 
 ## Safety is part of the product

@@ -42,13 +42,13 @@
           <p class="privacy-summary">No account. No analytics. No browser storage. The raw text is released from memory after parsing; reset clears the derived result.</p>
           <label class="consent-row" for="consent-checkbox">
             <input id="consent-checkbox" type="checkbox">
-            <span><strong>I understand the boundary</strong><small>This is educational exploration, not a clinical test or medication instruction.</small></span>
+            <span><strong>I consent to local-only processing</strong><small>This file stays in this browser, is not uploaded or stored, and reset clears the derived result. This is educational exploration, not a clinical test or medication instruction.</small></span>
           </label>
           <input id="file-input" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv" class="visually-hidden" disabled>
-          <label for="file-input" class="drop-zone is-disabled" id="drop-zone" aria-describedby="file-help" tabindex="0">
+          <button type="button" class="drop-zone is-disabled" id="drop-zone" aria-describedby="file-help" disabled>
             <span class="drop-title">Choose a raw DNA file</span>
             <span class="drop-help" id="file-help">Plain .txt, .csv, or .tsv, up to 80 MB</span>
-          </label>
+          </button>
           <div class="action-row">
             <button class="primary-button" id="demo-button" type="button">Explore the synthetic example</button>
             <button class="quiet-button" id="cancel-button" type="button" hidden>Cancel read</button>
@@ -166,7 +166,7 @@
         <div>
           <div class="eyebrow">MEDICATION SAFETY</div>
           <h2 id="safety-title">A better question is the result.</h2>
-          <p>Do not start, stop, substitute, or change a dose from this tool. CPIC explains how confirmed results may inform care; the FDA says consumers should discuss pharmacogenetic results with a health professional and may need clinical confirmation.</p>
+          <p>Consumer arrays are sparse genotyping, not sequencing or comprehensive clinical pharmacogenetics. Do not start, stop, substitute, or change a dose from this tool. CPIC explains how confirmed results may inform care; the FDA says consumers should discuss pharmacogenetic results with a health professional and may need clinical confirmation.</p>
         </div>
       </section>
     </main>

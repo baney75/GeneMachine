@@ -21,6 +21,7 @@ test("exports the supported summary without the original filename or raw rows", 
   assert.match(html, /File checks support one observation/);
   assert.match(html, /rs4149056 T\/C/);
   assert.match(html, /Do not change treatment/);
+  assert.match(html, /sparse genotyping, not sequencing/);
   assert.match(html, /ClinPGx rs4149056 variant record/);
   assert.doesNotMatch(html, new RegExp(secretFileName));
   assert.doesNotMatch(html, /# Forward strand/);

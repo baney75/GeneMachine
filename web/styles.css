@@ -175,6 +175,7 @@ h1 em { color: var(--mint); font-style: normal; }
 .consent-row strong { font-size: 0.9rem; }
 .consent-row small { margin-top: 3px; color: #617174; line-height: 1.4; }
 .drop-zone {
+  width: 100%;
   min-height: 124px;
   display: flex;
   flex-direction: column;
@@ -182,12 +183,14 @@ h1 em { color: var(--mint); font-style: normal; }
   justify-content: center;
   margin-top: 12px;
   border: 1px dashed #5d7d78;
+  padding: 16px;
+  color: #102035;
   background: #e8f5f1;
   cursor: pointer;
   transition: border-color 160ms ease, background-color 160ms ease;
 }
 .drop-zone:hover, .drop-zone.is-dragging { border-color: #087967; background: #dcf3ec; }
-.drop-zone.is-disabled { color: #788683; background: #edf1ef; border-color: #bdc8c4; cursor: not-allowed; }
+.drop-zone.is-disabled, .drop-zone:disabled { color: #788683; background: #edf1ef; border-color: #bdc8c4; cursor: not-allowed; }
 .drop-title { font-size: 1rem; font-weight: 780; }
 .drop-help { margin-top: 4px; color: #60706f; font-size: 0.77rem; }
 .action-row { display: flex; gap: 9px; margin-top: 10px; }

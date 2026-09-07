@@ -44,6 +44,7 @@ tmp/
 !web/*.html
 
 # Secrets and local environment
+node_modules/
 .env
 .env.*
 !.env.example
