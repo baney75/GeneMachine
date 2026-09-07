@@ -95,6 +95,31 @@ async function verifyBrowser(browserType, baseUrl) {
     assert.ok(focusTrace.includes(expected), `${browserType.name()} focus trace did not reach ${expected}: ${focusTrace.join(" -> ")}`);
   }
 
+  for (const [index, declaration] of [
+    "not forward strand",
+    "no forward strand",
+    "without a plus strand declaration",
+    "non-forward strand",
+    "unforward strand",
+    "not plus strand",
+    "possibly forward strand",
+    "reverse-forward strand",
+    "reverse / forward strand",
+    "minus or plus orientation",
+  ].entries()) {
+    const contraryFixture = Buffer.from(`# Synthetic fixture; no person\n# AncestryDNA raw data\n# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tallele1\tallele2\nrs4149056\t12\t21331549\tT\tC`);
+    await page.locator("#file-input").setInputFiles({
+      name: `contrary-orientation-${index}.txt`,
+      mimeType: "text/plain",
+      buffer: contraryFixture,
+    });
+    await page.locator("#results:not([hidden])").waitFor();
+    assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", declaration);
+    assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, declaration);
+  }
+  await page.locator("#demo-button").click();
+  await page.locator("#results:not([hidden])").waitFor();
+
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
   await page.evaluate(() => { document.documentElement.style.zoom = "2"; });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);

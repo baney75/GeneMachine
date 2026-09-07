@@ -167,6 +167,41 @@ test("abstains when build or strand orientation is ambiguous", () => {
   assert.equal(evaluateSlco1b1ExactMarker(conflicting).reasonCode, "missing_or_unsupported_orientation");
 });
 
+test("does not turn negated, prefixed, or compound direction language into a forward declaration", () => {
+  for (const declaration of [
+    "not forward strand",
+    "no forward strand",
+    "without a plus strand declaration",
+    "non-forward strand",
+    "unforward strand",
+    "not plus strand",
+    "possibly forward strand",
+    "reverse-forward strand",
+    "reverse / forward strand",
+    "minus or plus orientation",
+  ]) {
+    const report = parseConsumerDna(`# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, `${declaration}.tsv`);
+    assert.equal(report.orientation.value, null, declaration);
+    assert.equal(evaluateSlco1b1ExactMarker(report).reasonCode, "missing_or_unsupported_orientation", declaration);
+  }
+});
+
+test("recognizes bounded symbolic declarations without inferring an unidentified orientation", () => {
+  for (const declaration of ["+ strand", "orientation: +", "(+) strand"]) {
+    const report = parseConsumerDna(`# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, `${declaration}.tsv`);
+    assert.equal(report.orientation.value, "forward", declaration);
+    assert.equal(evaluateSlco1b1ExactMarker(report).status, "supported_observation", declaration);
+  }
+  for (const declaration of ["- strand", "orientation: -", "(-) strand"]) {
+    const report = parseConsumerDna(`# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tAG`, `${declaration}.tsv`);
+    assert.equal(report.orientation.value, "reverse", declaration);
+    assert.equal(evaluateSlco1b1ExactMarker(report).reasonCode, "missing_or_unsupported_orientation", declaration);
+  }
+  const unidentified = parseConsumerDna(`# build 37\n# orientation is unknown\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, "unknown-orientation.tsv");
+  assert.equal(unidentified.orientation.value, null);
+  assert.equal(evaluateSlco1b1ExactMarker(unidentified).reasonCode, "missing_or_unsupported_orientation");
+});
+
 test("abstains for duplicate, conflicting, no-call, and coordinate-mismatched target rows", () => {
   const duplicate = parseConsumerDna(`${supportedHeader}\nrs4149056\t12\t21331549\tTC\nrs4149056\t12\t21331549\tCT`, "duplicate.tsv");
   assert.equal(evaluateSlco1b1ExactMarker(duplicate).reasonCode, "duplicate_marker");
