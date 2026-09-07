@@ -123,6 +123,13 @@ async function verifyBrowser(browserType, baseUrl) {
     ["forward strand", "orientation is unknown"],
     ["- / + strand"],
     ["maybe + strand"],
+    ["forward strand; unknown"],
+    ["forward strand. unknown"],
+    ["forward strand; not confirmed"],
+    ["not; forward strand"],
+    [`not ${"filler ".repeat(16)}forward strand`],
+    ["perhaps forward strand"],
+    ["unknown", "forward strand"],
   ].entries()) {
     const ambiguousFixture = Buffer.from(`# Synthetic fixture; no person\n# AncestryDNA raw data\n# build 37\n${comments.map((comment) => `# ${comment}`).join("\n")}\nrsid\tchromosome\tposition\tallele1\tallele2\nrs4149056\t12\t21331549\tT\tC`);
     await page.locator("#file-input").setInputFiles({
