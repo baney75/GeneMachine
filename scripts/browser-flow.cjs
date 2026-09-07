@@ -50,6 +50,17 @@ async function verifyBrowser(browserType, baseUrl) {
   assert.match(await page.locator(".consent-row").innerText(), /local-only processing/i);
   assert.match(await page.locator(".consent-row").innerText(), /not uploaded or stored/i);
 
+  const syntheticFixture = await fs.readFile(path.join(root, "samples/synthetic-ancestry.txt"));
+  await page.locator("#file-input").setInputFiles({
+    name: "blocked-before-consent.tsv",
+    mimeType: "text/tab-separated-values",
+    buffer: syntheticFixture,
+  });
+  await page.locator("#error-toast:not([hidden])").waitFor();
+  assert.equal(await page.locator("#results").isHidden(), true);
+  assert.equal(await page.locator("#file-input").inputValue(), "");
+  assert.match(await page.locator("#error-toast").innerText(), /Consent to local-only processing/i);
+
   await page.locator("#consent-checkbox").check();
   assert.equal(await page.locator("#drop-zone").isEnabled(), true);
   const advanceFocus = browserType === webkit ? "Alt+Tab" : "Tab";
@@ -75,11 +86,18 @@ async function verifyBrowser(browserType, baseUrl) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
   await page.evaluate(() => { document.documentElement.style.zoom = "2"; });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
+  await page.evaluate(() => { document.documentElement.style.zoom = "1"; });
+  await page.setViewportSize({ width: 720, height: 900 });
+  const reflow720 = await page.evaluate(() => ({
+    innerWidth: window.innerWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  assert.deepEqual(reflow720, { innerWidth: 720, scrollWidth: 720 });
   assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
   assert.ok(requests.every((url) => new URL(url).hostname === "127.0.0.1"));
 
   await browser.close();
-  return { browser: browserType.name(), focusTrace };
+  return { browser: browserType.name(), focusTrace, reflow720 };
 }
 
 (async () => {

@@ -273,6 +273,11 @@ async function readFileLocally(file) {
 }
 
 async function inspectFile(file) {
+  if (!consentCheckbox.checked) {
+    fileInput.value = "";
+    showError("Consent to local-only processing and acknowledge the clinical boundary before choosing a DNA file.");
+    return;
+  }
   const requestId = ++latestRequest;
   if (activeReader) await activeReader.cancel().catch(() => {});
   scrubDerivedResult();
@@ -330,7 +335,7 @@ for (const eventName of ["dragleave", "drop"]) {
 }
 dropZone.addEventListener("drop", (event) => {
   if (!consentCheckbox.checked) {
-    showError("Acknowledge the privacy and clinical boundary before choosing a DNA file.");
+    showError("Consent to local-only processing and acknowledge the clinical boundary before choosing a DNA file.");
     consentCheckbox.focus();
     return;
   }
