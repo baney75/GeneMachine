@@ -186,6 +186,21 @@ test("does not turn negated, prefixed, or compound direction language into a for
   }
 });
 
+test("treats invalid orientation evidence anywhere in a multi-line header as a global abstention", () => {
+  for (const comments of [
+    ["orientation is unknown", "forward strand"],
+    ["no forward strand", "orientation: +"],
+    ["forward strand", "orientation is unknown"],
+    ["- / + strand"],
+    ["maybe + strand"],
+  ]) {
+    const report = parseConsumerDna(`# build 37\n${comments.map((comment) => `# ${comment}`).join("\n")}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, "ambiguous-orientation.tsv");
+    assert.equal(report.orientation.value, null, comments.join(" / "));
+    assert.equal(report.orientation.evidence, "File header conflict", comments.join(" / "));
+    assert.equal(evaluateSlco1b1ExactMarker(report).reasonCode, "missing_or_unsupported_orientation", comments.join(" / "));
+  }
+});
+
 test("recognizes bounded symbolic declarations without inferring an unidentified orientation", () => {
   for (const declaration of ["+ strand", "orientation: +", "(+) strand"]) {
     const report = parseConsumerDna(`# build 37\n# ${declaration}\nrsid\tchromosome\tposition\tgenotype\nrs4149056\t12\t21331549\tTC`, `${declaration}.tsv`);

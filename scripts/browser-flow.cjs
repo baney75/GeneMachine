@@ -117,6 +117,23 @@ async function verifyBrowser(browserType, baseUrl) {
     assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", declaration);
     assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, declaration);
   }
+  for (const [index, comments] of [
+    ["orientation is unknown", "forward strand"],
+    ["no forward strand", "orientation: +"],
+    ["forward strand", "orientation is unknown"],
+    ["- / + strand"],
+    ["maybe + strand"],
+  ].entries()) {
+    const ambiguousFixture = Buffer.from(`# Synthetic fixture; no person\n# AncestryDNA raw data\n# build 37\n${comments.map((comment) => `# ${comment}`).join("\n")}\nrsid\tchromosome\tposition\tallele1\tallele2\nrs4149056\t12\t21331549\tT\tC`);
+    await page.locator("#file-input").setInputFiles({
+      name: `ambiguous-orientation-${index}.txt`,
+      mimeType: "text/plain",
+      buffer: ambiguousFixture,
+    });
+    await page.locator("#results:not([hidden])").waitFor();
+    assert.equal((await page.locator("#finding-badge").innerText()).trim(), "ABSTAINED", comments.join(" / "));
+    assert.match(await page.locator("#status-detail").innerText(), /Forward \/ plus strand orientation must be explicitly declared/, comments.join(" / "));
+  }
   await page.locator("#demo-button").click();
   await page.locator("#results:not([hidden])").waitFor();
 
