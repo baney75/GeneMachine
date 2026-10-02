@@ -39,6 +39,7 @@ function startServer() {
 
 async function verifyBrowser(browserType, baseUrl) {
   const browser = await browserType.launch({ headless: true });
+  try {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
   const page = await context.newPage();
   const requests = [];
@@ -48,7 +49,7 @@ async function verifyBrowser(browserType, baseUrl) {
   assert.equal(await page.locator("#file-input").isDisabled(), true);
   assert.equal(await page.locator("#drop-zone").isDisabled(), true);
   assert.match(await page.locator(".consent-row").innerText(), /local-only processing/i);
-  assert.match(await page.locator(".consent-row").innerText(), /not uploaded or stored/i);
+  assert.match(await page.locator(".consent-row").innerText(), /does not upload your file or save a copy/i);
 
   const syntheticFixture = await fs.readFile(path.join(root, "samples/synthetic-ancestry.txt"));
   await page.locator("#file-input").setInputFiles({
@@ -297,9 +298,9 @@ async function verifyBrowser(browserType, baseUrl) {
   }));
   assert.deepEqual(reflow720, { innerWidth: 720, scrollWidth: 720 });
   assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
-  assert.ok(requests.every((url) => new URL(url).hostname === "127.0.0.1"));
+  // WebKit emits browser-local blob URLs for module workers; their origin must also be local.
+  assert.ok(requests.every((url) => new URL(url).origin === baseUrl), `Unexpected origin: ${requests.filter((url) => new URL(url).origin !== baseUrl).join(", ")}`);
 
-  await browser.close();
   return {
     browser: browserType.name(),
     downloadedReport: {
@@ -311,6 +312,7 @@ async function verifyBrowser(browserType, baseUrl) {
     focusTrace,
     reflow720,
   };
+  } finally { await browser.close(); }
 }
 
 (async () => {

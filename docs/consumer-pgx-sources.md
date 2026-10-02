@@ -1,13 +1,13 @@
 # Consumer pharmacogenetics source register
 
-Evidence reviewed through 2026-09-07. These sources support the local app's onboarding, one exact-marker evidence lane, and safety language. They do not clinically validate GeneMachine or a medication interpretation engine.
+Library sources and original exact-marker references rechecked October 2, 2026. Earlier price and caller-version snapshots below are dated historical context, not current offers. These sources support the local app's onboarding, one exact-marker evidence lane, and safety language. They do not clinically validate GeneMachine or a medication interpretation engine.
 
 | Source | What GeneMachine uses it for |
 | --- | --- |
-| [23andMe: Accessing Your Raw Genetic Data](https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-Your-Raw-Genetic-Data) | Current first-party path to browse and download a customer's raw genotyping data. |
-| [Ancestry: Downloading DNA Data](https://support.ancestry.com/s/article/Downloading-DNA-Data) | Current first-party download help page linked from onboarding. The page may require regional selection or client-side scripts. |
+| [23andMe: Accessing Your Raw Genetic Data](https://support.23andme.org/hc/en-us/articles/42965156401687-Accessing-Your-Raw-Genetic-Data) | Current first-party path to browse and download a customer's raw genotyping data. |
+| [Ancestry: Downloading DNA Data](https://help.ancestry.com/hc/en-us/articles/53933317283603-Downloading-DNA-Data) | Current first-party download help page linked from onboarding. The page may require regional selection or client-side scripts. |
 | [23andMe: Which Reference Genome and Strand Does 23andMe Use?](https://customercare.23andme.com/hc/en-us/articles/212883767-Which-Reference-Genome-and-Strand-Does-23andMe-Use) | Current first-party confirmation that 23andMe reports genotypes on the positive strand of the specified reference assembly. It does not promise one exact raw-export header sentence. |
-| [Ancestry: Reading your DNA Data](https://support.ancestry.com/s/article/Downloading-DNA-Data#reading) | Current first-party confirmation that AncestryDNA reports raw genotypes on the genomic forward strand with respect to GRCh37. It does not promise one exact raw-export header line wrap. |
+| [Ancestry: Reading your DNA Data](https://help.ancestry.com/hc/en-us/articles/53933317283603-Downloading-DNA-Data#reading) | Current first-party confirmation that AncestryDNA reports raw genotypes on the genomic forward strand with respect to GRCh37. It does not promise one exact raw-export header line wrap. |
 | [AncestryDNA kit page](https://www.ancestry.com/dna/) | First-party page for current kit and bundle options. GeneMachine does not copy a sale price because pricing, renewal terms, and bundles change. |
 | [23andMe DNA Test Kit Service Options](https://customercare.23andme.com/hc/en-us/articles/202908020-23andMe-DNA-Test-Kit-Service-Options) | First-party comparison of current service tiers. It states that ancestry services include access to a raw, uninterpreted file and that the file must not be used for medical or diagnostic purposes. |
 | [H600 Microarray File Formats](https://wiki.h600.org/Microarray%2BFile%2BFormats) | Technical format reference for provider-generated raw files. It documents AncestryDNA's numeric non-autosomal encoding: 23 = X, 24 = Y, 25 = X/Y pseudoautosomal region, and 26 = mitochondrial. GeneMachine applies this mapping only when the file identifies itself as AncestryDNA. |
@@ -33,7 +33,7 @@ The exact header sentences in the synthetic fixtures are legacy interoperability
 | ZIP/GZIP archive | No | No | Extract locally first. Archives are never uploaded or opened in the app. |
 | VCF/gVCF, sequencing, BAM/CRAM/FASTQ, methylation, multi-sample table | No in this browser candidate | No | Requires a separate reference-aware validated workflow and, for complex PGx, required-position, phase, copy-number, and structural-variant handling. |
 
-## Current lower-cost path, United States
+## Historical acquisition snapshot, United States
 
 Use an existing export first for $0. If no suitable file exists, the [Ancestry product comparison](https://www.ancestry.com/c/dna/compare-ancestry-dna-test-kits?geo-lang=en) showed a $99 U.S. base AncestryDNA kit on 2026-09-06, excluding shipping; Ancestry's [shipping page](https://support.ancestry.com/s/article/AncestryDNA-Shipping) listed $9.95 standard U.S. shipping for the first kit. Taxes, promotions, memberships, availability, and checkout total can change. This consumer ancestry kit is not recommended as a comprehensive clinical PGx test. No current 23andMe price is copied because a stable first-party U.S. base price was not independently verified during this review.
 
@@ -42,3 +42,13 @@ Use an existing export first for $0. If no suitable file exists, the [Ancestry p
 The app reports what it observes in the selected text file: layout, declared build/orientation, row counts, rsID proportion, no-call rate, malformed rows, duplicate marker IDs, chromosome counts, and a strictly gated rs4149056 observation. It does not infer star alleles, phase, copy number, HLA type, phenotype, medication suitability, or dose. A high file call rate is not pharmacogene coverage. A missing tested allele is unknown, not a comprehensive negative result.
 
 The raw file stays in browser memory. No raw row, original filename, derived genotype, hash, or report is sent to analytics, logs, browser storage, external AI, Runpod, or another origin. Export is a deliberate local download containing only the displayed, derived discussion summary; it excludes raw rows and the original filename.
+
+## Medicine learning library, October 2, 2026
+
+`lib/medicine-library.mjs` holds the seven educational topics and their primary CPIC sources, independently researched on October 2. These general topics are not DNA interpretations and do not recommend testing for everyone. The appointment checklist includes the chosen questions, limits, source links, and review date. No personal name, medicine list, free-text notes, or DNA is collected by the library.
+
+The thiopurine topic uses the 2025 update published in 2026. The DPYD topic includes CPIC's July 2026 pending-update notice and requires review when the new guideline is published. Static content does not refresh itself.
+
+Current export instructions: 23andMe's provider page describes account and identity checks, a emailed notification, a ZIP archive, and a wait that can reach 30 days. Ancestry describes verification, an emailed single-use ZIP link, and possible delay. The interface links directly to the provider pages rather than promising immediate access or prescribing a fixed menu path. No current price or lowest-cost-kit claim is made.
+
+The previous analytical scope remains unchanged. Evidence links and a software test suite are not clinical validation or qualified medical review.

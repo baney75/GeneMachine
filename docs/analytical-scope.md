@@ -1,6 +1,6 @@
 # Analytical scope and known gaps
 
-Reviewed September 6, 2026. This document describes what the browser candidate was tested to do. It is not an analytical-validation study, clinical validation, regulatory review, or laboratory certification.
+Software scope updated October 2, 2026; original exact-marker method unchanged. This document describes what the browser candidate was tested to do. It is not an analytical-validation study, clinical validation, regulatory review, or laboratory certification.
 
 ## Implemented scope
 
@@ -37,3 +37,11 @@ The automated fixtures cover GRCh37 and GRCh38 exact-marker paths; missing locus
 - A qualified pharmacogenomics scientist or clinical laboratory professional has not reviewed this software as a clinical system.
 
 The browser app is therefore appropriate only for local educational exploration and preparation for a professional discussion.
+
+## October 2 educational product update
+
+The no-DNA medicine library and appointment checklist offer general learning only. They do not inspect a genome or make an individualized clinical finding. Seven topics have dated CPIC links; the DPYD update warning is explicit. These additions do not add phenotype or drug-response capability.
+
+Browser import now runs in a cancellable worker. The worker releases raw text and the complete genotype table when terminated; only aggregate QC and the gated finding return to the interface. Original bytes, including BOM and CRLF, are hashed before decoding. Withdrawing consent cancels analysis and clears the derived DNA result. The original file and prior downloads are unaffected.
+
+The new application server exposes public assets only and rejects uploads. `npm run build` produces an isolated static publication artifact. Actual HTTPS-host configuration and public deployment must be checked separately. Clinical validation, native iPhone testing, real-user comprehension testing, and qualified clinical content review remain unperformed.

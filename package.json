@@ -1,12 +1,14 @@
 {
   "name": "genemachine",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "python3 -m http.server 4173 --bind 127.0.0.1 -d .",
+    "start": "node scripts/serve.mjs",
     "test": "node --test",
-    "test:browser": "node scripts/browser-flow.cjs"
+    "test:browser": "node scripts/browser-flow.cjs",
+    "build": "node scripts/build.mjs",
+    "test:experience": "node scripts/experience-flow.cjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0"

@@ -1,12 +1,9 @@
 import {
-  createPharmacogeneticCapabilityMap,
-  evaluateSlco1b1ExactMarker,
   formatPercent,
-  parseConsumerDna,
 } from "../lib/consumer-dna.mjs";
 import { createDiscussionReportHtml } from "../lib/discussion-report.mjs";
 
-const MAX_FILE_BYTES = 80 * 1024 * 1024;
+import { MAX_FILE_BYTES } from "../lib/local-analysis.mjs";
 const fileInput = document.querySelector("#file-input");
 const consentCheckbox = document.querySelector("#consent-checkbox");
 const dropZone = document.querySelector("#drop-zone");
@@ -19,7 +16,8 @@ const progressValue = document.querySelector("#progress-value");
 const results = document.querySelector("#results");
 const errorToast = document.querySelector("#error-toast");
 let latestRequest = 0;
-let activeReader = null;
+let activeWorker = null;
+let demoController = null;
 let activeResult = null;
 let activeObjectUrl = null;
 fileInput.tabIndex = -1;
@@ -48,6 +46,11 @@ function updateConsentState() {
   dropZone.disabled = !allowed;
   dropZone.classList.toggle("is-disabled", !allowed);
   dropZone.setAttribute("aria-disabled", String(!allowed));
+  if (!allowed) {
+    cancelInspection();
+    scrubDerivedResult();
+    fileInput.value = "";
+  }
 }
 
 function scrubDerivedResult() {
@@ -77,12 +80,6 @@ function scrubDerivedResult() {
 
 function formatGenotype(value) {
   return value ? value.split("").join("/") : "No call";
-}
-
-async function sha256(text) {
-  const bytes = new TextEncoder().encode(text);
-  const buffer = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function renderMetrics(report) {
@@ -183,8 +180,7 @@ function renderFinding(finding) {
   document.querySelector("#clinician-discussion").textContent = finding.clinicianDiscussion;
 }
 
-function renderCapabilityMap(report) {
-  const capability = createPharmacogeneticCapabilityMap(report);
+function renderCapabilityMap(capability) {
   const items = [
     ["EXACT", "Exact marker", capability.exactMarker],
     ["PHASE", "Star alleles", capability.starAlleles],
@@ -199,7 +195,7 @@ function renderCapabilityMap(report) {
   }));
 }
 
-function renderReport(report, finding, digest, isSynthetic = false) {
+function renderReport(report, finding, digest, capability, isSynthetic = false) {
   activeResult = { report, finding, digest, isSynthetic };
   document.querySelector("#result-title").textContent = isSynthetic ? "Synthetic exact-marker fixture" : "Local DNA file";
   document.querySelector("#result-kicker").textContent = `${report.provider.toUpperCase()} / ${report.delimiter.toUpperCase()}`;
@@ -207,6 +203,7 @@ function renderReport(report, finding, digest, isSynthetic = false) {
     ? "This fixture contains no person. It demonstrates the supported exact-marker path."
     : "The original filename and raw rows are not shown or included in the discussion report.";
   document.querySelector("#synthetic-badge").hidden = !isSynthetic;
+  document.querySelector("#synthetic-badge").textContent = isSynthetic ? "EXAMPLE, NOT YOUR DNA" : "";
   document.querySelector("#provenance-input").textContent = isSynthetic ? "Built-in synthetic fixture" : "User-selected local file";
   document.querySelector("#provenance-hash").textContent = `${digest.slice(0, 16)}...`;
 
@@ -220,79 +217,87 @@ function renderReport(report, finding, digest, isSynthetic = false) {
   renderChromosomes(report);
   renderChecks(report);
   renderFinding(finding);
-  renderCapabilityMap(report);
+  renderCapabilityMap(capability);
   renderWarnings(report, finding);
   results.hidden = false;
   results.scrollIntoView({ behavior: preferredScrollBehavior(), block: "start" });
 }
 
-async function inspectText(text, sourceName, isSynthetic) {
-  const requestId = ++latestRequest;
+function cancelInspection() {
+  latestRequest += 1;
+  if (activeWorker) activeWorker.terminate();
+  activeWorker = null;
+  if (demoController) demoController.abort();
+  demoController = null;
+  cancelButton.hidden = true;
+  progressLine.hidden = true;
+  progressValue.style.width = "0";
+  document.querySelector("#analysis-status").textContent = "";
+}
+
+function beginInspection() {
+  cancelInspection();
   scrubDerivedResult();
   errorToast.hidden = true;
-  try {
-    const digestPromise = sha256(text);
-    const report = parseConsumerDna(text, sourceName);
-    const finding = evaluateSlco1b1ExactMarker(report);
-    const digest = await digestPromise;
-    if (requestId !== latestRequest) return;
-    renderReport(report, finding, digest, isSynthetic);
-  } catch (error) {
-    if (requestId !== latestRequest) return;
-    showError(error instanceof Error ? error.message : "This file could not be inspected.");
-  } finally {
-    fileInput.value = "";
-  }
-}
-
-async function readFileLocally(file) {
-  if (file.size > MAX_FILE_BYTES) throw new Error("This file is larger than the 80 MB browser safety limit.");
-  const reader = file.stream().getReader();
-  activeReader = reader;
-  const decoder = new TextDecoder();
-  let text = "";
-  let received = 0;
-  progressLine.hidden = false;
   cancelButton.hidden = false;
+  progressLine.hidden = false;
+  progressValue.style.width = "12%";
+  document.querySelector("#analysis-status").textContent = "Starting local analysis. You can cancel at any time.";
+  return latestRequest;
+}
+
+function inspectInWorker(payload, requestId, isSynthetic) {
   try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      received += value.byteLength;
-      text += decoder.decode(value, { stream: true });
-      progressValue.style.width = `${Math.min(100, Math.round((received / Math.max(file.size, 1)) * 100))}%`;
-    }
-    text += decoder.decode();
-    return text;
-  } finally {
-    activeReader = null;
-    cancelButton.hidden = true;
-    progressLine.hidden = true;
-    progressValue.style.width = "0";
+    const worker = new Worker(new URL("./analysis-worker.js", import.meta.url), { type: "module" });
+    activeWorker = worker;
+    const finish = () => {
+      worker.terminate();
+      if (activeWorker === worker) activeWorker = null;
+      cancelButton.hidden = true;
+      progressLine.hidden = true;
+      document.querySelector("#analysis-status").textContent = "";
+      fileInput.value = "";
+    };
+    worker.onmessage = ({ data }) => {
+      if (requestId !== latestRequest) return;
+      if (data.stage) {
+        progressLine.setAttribute("aria-label", data.stage);
+        document.querySelector("#analysis-status").textContent = data.stage;
+        progressValue.style.width = "55%";
+        return;
+      }
+      finish();
+      if (data.error) { showError(data.error); return; }
+      const { report, finding, digest, capability } = data.result;
+      renderReport(report, finding, digest, capability, isSynthetic);
+    };
+    worker.onerror = (event) => {
+      event.preventDefault();
+      if (requestId !== latestRequest) return;
+      finish();
+      showError("The local analysis could not start. Try a fresh page in a browser with Web Worker support.");
+    };
+    worker.postMessage(payload);
+  } catch {
+    cancelInspection();
+    showError("The local analysis could not start. Open GeneMachine through its local server in a current browser.");
   }
 }
 
-async function inspectFile(file) {
+function inspectFile(file) {
   if (!consentCheckbox.checked) {
     fileInput.value = "";
     showError("Consent to local-only processing and acknowledge the clinical boundary before choosing a DNA file.");
     return;
   }
-  const requestId = ++latestRequest;
-  if (activeReader) await activeReader.cancel().catch(() => {});
-  scrubDerivedResult();
-  errorToast.hidden = true;
-  try {
-    const text = await readFileLocally(file);
-    if (requestId !== latestRequest) return;
-    latestRequest -= 1;
-    await inspectText(text, file.name, false);
-  } catch (error) {
-    if (requestId !== latestRequest) return;
-    showError(error instanceof Error ? error.message : "This file could not be read.");
-  } finally {
+  const requestId = beginInspection();
+  if (file.size > MAX_FILE_BYTES) {
+    cancelInspection();
     fileInput.value = "";
+    showError("This file is larger than the 80 MB browser safety limit.");
+    return;
   }
+  inspectInWorker({ file }, requestId, false);
 }
 
 function exportDiscussionReport() {
@@ -307,8 +312,7 @@ function exportDiscussionReport() {
 }
 
 function resetAnalysis() {
-  latestRequest += 1;
-  if (activeReader) activeReader.cancel().catch(() => {});
+  cancelInspection();
   scrubDerivedResult();
   fileInput.value = "";
   errorToast.hidden = true;
@@ -348,21 +352,30 @@ dropZone.addEventListener("click", () => {
 });
 
 cancelButton.addEventListener("click", () => {
-  latestRequest += 1;
-  if (activeReader) activeReader.cancel().catch(() => {});
+  cancelInspection();
   scrubDerivedResult();
   showError("File reading was canceled. No result was retained.");
 });
 
 demoButton.addEventListener("click", async () => {
+  const requestId = beginInspection();
+  const controller = new AbortController();
+  demoController = controller;
   try {
-    const response = await fetch("../samples/synthetic-ancestry.txt", { cache: "no-store" });
+    const response = await fetch("../samples/synthetic-ancestry.txt", { cache: "no-store", signal: controller.signal });
     if (!response.ok) throw new Error("The synthetic example is unavailable.");
-    await inspectText(await response.text(), "synthetic-reference.tsv", true);
+    const text = await response.text();
+    if (requestId !== latestRequest) return;
+    demoController = null;
+    inspectInWorker({ text }, requestId, true);
   } catch (error) {
+    if (requestId !== latestRequest) return;
+    cancelInspection();
     showError(error instanceof Error ? error.message : "The synthetic example could not be loaded.");
   }
 });
+
+window.addEventListener("pagehide", () => { cancelInspection(); scrubDerivedResult(); fileInput.value = ""; });
 
 resetButton.addEventListener("click", resetAnalysis);
 exportButton.addEventListener("click", exportDiscussionReport);

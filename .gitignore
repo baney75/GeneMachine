@@ -60,3 +60,8 @@ secrets*
 Thumbs.db
 .idea/
 .vscode/
+
+# Build output and private local review logs
+dist/
+evidence/
+!docs/product-evaluation.html
