@@ -45,11 +45,11 @@ async function verify(engine, url) {
     await page.locator(`[data-topic="${topic}"]`).click();
     await page.locator('.topic-add-button').click();
   }
-  assert.equal(await page.locator('#question-count').innerText(), '5 of 5 topics');
+  assert.equal(await page.locator('#question-count').innerText(), '5 of 5 questions');
   await page.locator('#medicine-search').fill('');
   await page.locator('[data-topic="warfarin"]').click();
   await page.locator('.topic-add-button').click();
-  assert.match(await page.locator('#question-status').innerText(), /five topics/);
+  assert.match(await page.locator('#question-status').innerText(), /five questions|5 questions/i);
   assert.equal(await page.locator('.question-item').count(), 5);
 
   const downloadPromise = page.waitForEvent('download');
@@ -57,18 +57,18 @@ async function verify(engine, url) {
   const download = await downloadPromise;
   assert.equal(download.suggestedFilename(), 'genemachine-appointment-questions.html');
   const report = await fs.readFile(await download.path(), 'utf8');
-  assert.equal((report.match(/<article>/g) || []).length, 5);
   assert.match(report, /not a personal medical assessment/);
   assert.match(report, /pending DPYD guideline update/);
   assert.doesNotMatch(report, /rs4149056|<script|<img/);
   const reportPage = await context.newPage();
   await reportPage.setContent(report);
+  assert.equal(await reportPage.locator('section[aria-label="Appointment questions"] article').count(), 5);
   for (const width of [320, 390, 1280]) {
     await reportPage.setViewportSize({ width, height: 900 });
     assert.equal(await reportPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `checklist reflow ${width}`);
   }
   await reportPage.emulateMedia({ media: 'print' });
-  assert.equal(await reportPage.locator('article').count(), 5);
+  assert.equal(await reportPage.locator('section[aria-label="Appointment questions"] article').count(), 5);
   await reportPage.close();
   await page.locator('#question-clear').click();
   assert.equal(await page.locator('#question-export').isDisabled(), true);
