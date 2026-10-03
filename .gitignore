@@ -39,7 +39,12 @@ tmp/
 *.sqlite
 *.db
 
+# The reviewable local app is source, not a per-person report.
+!web/
+!web/*.html
+
 # Secrets and local environment
+node_modules/
 .env
 .env.*
 !.env.example
@@ -55,3 +60,9 @@ secrets*
 Thumbs.db
 .idea/
 .vscode/
+
+# Build output and private local review logs
+dist/
+.wrangler/
+evidence/
+!docs/product-evaluation.html

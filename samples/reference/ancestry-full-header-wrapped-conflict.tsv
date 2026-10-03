@@ -1,0 +1,8 @@
+# GeneMachine synthetic abstention fixture with no real person or biological interpretation
+# AncestryDNA raw data download
+# Data uses genome build 37
+# Columns four and five contain the two alleles observed at this SNP (genotype). The genotype is reported
+# on the forward (+) strand with respect to the human reference.
+# orientation is unknown
+rsid	chromosome	position	allele1	allele2
+rs4149056	12	21331549	T	C

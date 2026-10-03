@@ -1,0 +1,18 @@
+{
+  "name": "genemachine",
+  "version": "2.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test",
+    "test:browser": "node scripts/browser-flow.cjs",
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run build && wrangler deploy",
+    "test:experience": "node scripts/experience-flow.cjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0",
+    "wrangler": "4.147.0"
+  }
+}

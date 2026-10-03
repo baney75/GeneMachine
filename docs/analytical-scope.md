@@ -1,0 +1,47 @@
+# Analytical scope and known gaps
+
+Software scope updated October 2, 2026; original exact-marker method unchanged. This document describes what the browser candidate was tested to do. It is not an analytical-validation study, clinical validation, regulatory review, or laboratory certification.
+
+## Implemented scope
+
+The local importer accepts one plain-text ASCII consumer genotype table with an rsID, chromosome, position, and combined genotype or split allele columns. A leading UTF-8 byte-order mark and CRLF line endings are accepted. Other non-ASCII or non-printing formatting is rejected before parsing so visually hidden text cannot conceal strand evidence; tabs are accepted as table delimiters but rejected inside prose comments, and lone carriage returns are rejected. It reports file-level counts, no-calls, malformed rows, duplicate rsIDs, chromosome row counts, declared build, and declared orientation. Inputs are limited to 50 million characters and 2 million retained variant rows in the parser; each retained comment is limited to 16,384 characters, retained header comments total at most 100,000 characters, and the browser rejects files over 80 MB before reading.
+
+The only PGx lane is SLCO1B1 c.521T>C, rs4149056. GeneMachine reports an exact-marker observation only when all of these checks pass:
+
+- the file explicitly declares GRCh37 or GRCh38;
+- the file explicitly declares forward or plus orientation;
+- rs4149056 appears exactly once with a called genotype;
+- chromosome and position match the pinned NCBI ClinVar coordinate for that build;
+- the genotype uses only the forward-strand T/C allele alphabet.
+
+The software then says that the file-level consistency checks passed. It does not say the assay, sample, or genotype was analytically confirmed.
+
+## Forced abstention
+
+GeneMachine stops when the build or orientation is absent or unsupported, the marker is missing or a no-call, a duplicate exists, duplicate calls conflict, the coordinate does not match, or the observed allele is outside the pinned definition. Missing remains unknown. The interface names a clinically validated pharmacogenetic test as the next evidence when the locus is missing.
+
+VCF, gVCF, BAM, CRAM, FASTQ, methylation, compressed archives, and multi-sample tables are not accepted by this browser importer. CYP2D6, HLA, star alleles, diplotypes, phenotype calls, phase, copy number, structural variation, medication response, and dose remain unavailable.
+
+## Verification performed
+
+The automated fixtures cover GRCh37 and GRCh38 exact-marker paths; missing locus; missing build; missing and reverse orientation; no-call; duplicate; conflicting duplicate; wrong coordinate; unexpected allele; malformed rows; unsupported chromosomes; VCF; multiple-sample headers; and configured size/row limits. The repeatable Chromium and WebKit browser check covers the privacy acknowledgement, consent-gated native file button, keyboard focus path, synthetic result, local-only requests, empty browser storage, narrow layout, and 200% CSS-zoom stress test. Independent verification separately covers export, reset, meaningful failures, reduced motion, and performance.
+
+## Known gaps before clinical use
+
+- No wet-lab or orthogonal assay comparison was performed.
+- No reference-material panel, sensitivity, specificity, accuracy, precision, reproducibility, interference, or report-interpretation study was performed.
+- No provider array version was validated as comprehensive for SLCO1B1 or any drug decision.
+- Header text is treated as provenance evidence, not proof that a provider generated or oriented the file correctly.
+- The software does not validate sample identity, contamination, mosaicism, ploidy, sex chromosomes, relatedness, or chain of custody.
+- The exact-marker observation does not establish a star allele, diplotype, phenotype, or medication recommendation.
+- A qualified pharmacogenomics scientist or clinical laboratory professional has not reviewed this software as a clinical system.
+
+The browser app is therefore appropriate only for local educational exploration and preparation for a professional discussion.
+
+## October 2 educational product update
+
+The no-DNA medicine library and appointment checklist offer general learning only. They do not inspect a genome or make an individualized clinical finding. Seven topics have dated CPIC links; the DPYD update warning is explicit. These additions do not add phenotype or drug-response capability.
+
+Browser import now runs in a cancellable worker. The worker releases raw text and the complete genotype table when terminated; only aggregate QC and the gated finding return to the interface. Original bytes, including BOM and CRLF, are hashed before decoding. Withdrawing consent cancels analysis and clears the derived DNA result. The original file and prior downloads are unaffected.
+
+The new application server exposes public assets only and rejects uploads. `npm run build` produces an isolated static publication artifact. Actual HTTPS-host configuration and public deployment must be checked separately. Clinical validation, native iPhone testing, real-user comprehension testing, and qualified clinical content review remain unperformed.
