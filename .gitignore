@@ -63,5 +63,6 @@ Thumbs.db
 
 # Build output and private local review logs
 dist/
+.wrangler/
 evidence/
 !docs/product-evaluation.html

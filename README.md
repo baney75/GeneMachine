@@ -55,7 +55,19 @@ npm run build
 
 The browser checks exercise import, technical abstention, consent, cancellation, exports, medication search, checklist limits, responsive reflow, and requests/storage in Chromium and Playwright WebKit. WebKit is not a native iPhone or Safari-device test. Synthetic fixtures test software behavior; they do not establish clinical accuracy or real-user comprehension.
 
-`npm run build` produces `dist/`, containing only the static app, libraries, brand assets, and synthetic example. Serve it over HTTPS or localhost so workers and cryptographic hashing work. Preserve its folder structure; `/web/` is the app entry. Configure the same security headers as `scripts/serve.mjs` on the chosen host. Building is separate from deployment.
+`npm run build` produces `dist/`, containing only the static app, libraries, brand assets, synthetic example, and hosting rules. Serve it over HTTPS or localhost so workers and cryptographic hashing work. Preserve its folder structure; `/web/` is the app entry. Building is separate from deployment.
+
+The checked-in Cloudflare configuration serves static assets in Donovan's Personal account, with no database or upload endpoint. `hosting/_headers` preserves the local server's content-security, referrer, MIME, and cache protections. The root redirects to `/web/`. To release from an authorized Cloudflare login:
+
+```bash
+npm ci
+npx wrangler login
+npm run deploy
+```
+
+Deployment uses the pinned Wrangler version and the `genemachine` Worker name in `wrangler.jsonc`. Review the account and name before deploying a fork. No custom domain is configured. The deployed site still performs DNA parsing inside the visitor's browser.
+
+To run the same synthetic experience checks against a deployed HTTPS origin, set `GENEMACHINE_TEST_ORIGIN` to that origin and run `npm run test:experience`. This checks the live worker, downloads, security headers, request origins, browser storage, mobile reflow, and blocked upload methods in both browser engines.
 
 ## Install the Agent Skill
 

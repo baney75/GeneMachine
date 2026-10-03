@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
+const { createHash } = require('node:crypto');
 const { chromium, webkit } = require('playwright');
 const root = path.resolve(__dirname, '..');
 
@@ -86,6 +87,16 @@ async function verify(engine, url) {
   await page.locator('#file-input').setInputFiles({ name: 'private-person.txt', mimeType: 'text/plain', buffer: fixture });
   await page.locator('#results:not([hidden])').waitFor();
   assert.equal((await page.locator('#finding-badge').innerText()).trim(), 'OBSERVATION SUPPORTED');
+
+  const expectedHash = createHash('sha256').update(fixture).digest('hex');
+  assert.equal((await page.locator('#provenance-hash').innerText()).trim(), expectedHash);
+  const dnaDownloadPromise = page.waitForEvent('download');
+  await page.locator('#export-button').click();
+  const dnaDownload = await dnaDownloadPromise;
+  assert.equal(dnaDownload.suggestedFilename(), 'genemachine-discussion-report.html');
+  const dnaReport = await fs.readFile(await dnaDownload.path(), 'utf8');
+  assert.ok(dnaReport.includes(expectedHash), 'DNA report preserves the original-byte digest');
+  assert.doesNotMatch(dnaReport, /private-person\.txt/);
   assert.doesNotMatch(await page.locator('body').innerText(), /private-person\.txt/);
   await page.locator('#consent-checkbox').uncheck();
   assert.equal(await page.locator('#results').isHidden(), true);
@@ -136,6 +147,11 @@ async function verify(engine, url) {
   }
   const response = await page.request.get(url + '/web/');
   assert.match(response.headers()['content-security-policy'], /connect-src 'self'/);
+  assert.match(response.headers()['content-security-policy'], /worker-src 'self'/);
+  assert.match(response.headers()['content-security-policy'], /frame-ancestors 'none'/);
+  assert.equal(response.headers()['referrer-policy'], 'no-referrer');
+  assert.equal(response.headers()['x-content-type-options'], 'nosniff');
+  assert.equal(response.headers()['cache-control'], 'no-store');
   assert.equal((await page.request.post(url + '/web/', { data: 'no-upload' })).status(), 405);
   await page.locator('#reset-button').click();
   assert.equal(await page.locator('#results').isHidden(), true);
@@ -144,10 +160,17 @@ async function verify(engine, url) {
 }
 
 (async () => {
-  const { child, url } = await startServer();
+  let child, url;
+  if (process.env.GENEMACHINE_TEST_ORIGIN) {
+    const target = new URL(process.env.GENEMACHINE_TEST_ORIGIN);
+    assert.ok(target.protocol === 'https:' && target.pathname === '/' && !target.search && !target.hash && !target.username && !target.password, 'Set GENEMACHINE_TEST_ORIGIN to an HTTPS origin without credentials, query, or path');
+    url = target.origin;
+  } else {
+    ({ child, url } = await startServer());
+  }
   try {
     const results = [];
     for (const engine of [chromium, webkit]) results.push(await verify(engine, url));
     console.log(JSON.stringify(results, null, 2));
-  } finally { child.kill(); }
+  } finally { child?.kill(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

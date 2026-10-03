@@ -10,5 +10,6 @@ await mkdir(new URL('samples/', dist));
 await cp(new URL('samples/synthetic-ancestry.txt', root), new URL('samples/synthetic-ancestry.txt', dist));
 await mkdir(new URL('docs/', dist));
 await cp(new URL('docs/product-evaluation.html', root), new URL('docs/product-evaluation.html', dist));
+for (const file of ['_headers', '_redirects']) await cp(new URL(`hosting/${file}`, root), new URL(file, dist));
 await writeFile(new URL('index.html', dist), '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=./web/"><title>GeneMachine</title></head><body><a href="./web/">Open GeneMachine</a></body></html>\n');
 console.log(`Static GeneMachine built at ${fileURLToPath(dist)}. Only public app assets and the synthetic example are included.`);
