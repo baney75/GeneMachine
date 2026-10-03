@@ -1,6 +1,6 @@
 {
   "name": "genemachine",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,8 @@
     "build": "node scripts/build.mjs",
     "deploy": "npm run build && wrangler deploy",
     "test:experience": "node scripts/experience-flow.cjs",
-    "test:design": "node scripts/minimal-flow.cjs"
+    "test:design": "node scripts/minimal-flow.cjs",
+    "test:appointment": "node scripts/appointment-flow.cjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0",

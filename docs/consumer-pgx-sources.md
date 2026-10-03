@@ -45,9 +45,15 @@ The raw file stays in browser memory. No raw row, original filename, derived gen
 
 ## Medicine learning library, October 2, 2026
 
-`lib/medicine-library.mjs` holds the seven educational topics and their primary CPIC sources, independently researched on October 2. These general topics are not DNA interpretations and do not recommend testing for everyone. The appointment checklist includes the chosen questions, limits, source links, and review date. No personal name, medicine list, free-text notes, or DNA is collected by the library.
+`lib/medicine-library.mjs` holds the seven educational topics and their primary CPIC sources, independently researched on October 2. These general topics are not DNA interpretations and do not recommend testing for everyone. The appointment worksheet includes the chosen questions, limits, source links, and review date. Optional custom medicine names, edited questions, and notes are held in browser memory until the user copies or downloads them; they are never submitted to a server or interpreted as clinical evidence.
 
 The thiopurine topic uses the 2025 update published in 2026. The DPYD topic includes CPIC's July 2026 pending-update notice and requires review when the new guideline is published. Static content does not refresh itself.
+
+## Appointment preparation, October 3, 2026
+
+[AHRQ's medicine guide](https://www.ahrq.gov/questions/resources/your-meds/index.html) recommends writing medicine questions before a visit and recording the care team's answers. [MedlinePlus's pharmacogenetic-testing explainer](https://medlineplus.gov/lab-tests/pharmacogenetic-tests/) explains that these tests are not available for all medicines. These sources support a question-preparation workflow, not a claim that GeneMachine improves health outcomes or that a test is appropriate for a specific person.
+
+The worksheet therefore accepts questions about medicines outside the curated library and explicitly marks them **Medicine not assessed**. It infers no gene, test, evidence source, or treatment advice for a custom entry. Curated source material remains distinct from edited questions and personal notes in both HTML and plain-text exports.
 
 Current export instructions: 23andMe's provider page describes account and identity checks, a emailed notification, a ZIP archive, and a wait that can reach 30 days. Ancestry describes verification, an emailed single-use ZIP link, and possible delay. The interface links directly to the provider pages rather than promising immediate access or prescribing a fixed menu path. No current price or lowest-cost-kit claim is made.
 

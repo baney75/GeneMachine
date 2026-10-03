@@ -20,7 +20,7 @@ cd GeneMachine
 npm start
 ```
 
-Open **http://127.0.0.1:4173/**. The app requires no runtime packages or API keys. Search for `clopidogrel` or `CYP2D6`, open a topic, and choose **Add this question**. Build a list of up to five topics and download a printable appointment checklist. Open the downloaded HTML file in your browser to print or save as PDF.
+Open **http://127.0.0.1:4173/**. The app requires no runtime packages or API keys. Search for `clopidogrel` or `CYP2D6`, open a topic, and choose **Add this question**. Or choose **Write a question** for any medicine, including one the library does not cover. Edit the wording, add personal notes, and move your main concern to the top. Keep up to five questions, then copy them or download a printable appointment worksheet. Open the downloaded HTML file in your browser to print or save as PDF.
 
 To see the DNA workflow without using anyone’s data, choose **Try the synthetic example**. You should see **OBSERVATION SUPPORTED**, an explicit synthetic label, and a single rs4149056 observation with its limits. **Clear this DNA now** clears the displayed finding.
 
@@ -29,7 +29,8 @@ For a private file, read the privacy explanation, consent to local-only processi
 ## What the app provides
 
 - Seven source-linked learning topics: statins, clopidogrel, thiopurines, fluorouracil/capecitabine, codeine/tramadol, warfarin, and tacrolimus. Search recognizes medicine names, several brand names, genes, and categories.
-- General evidence, individual unknowns, testing questions, and a local appointment checklist. Library topics are educational; they are never matched to your DNA or presented as your prescriptions.
+- General evidence, individual unknowns, and testing questions. Library topics are educational; they are never matched to your DNA or presented as your prescriptions.
+- An editable appointment worksheet for any medicine: five questions, personal notes, priority ordering, plain-text copy, and printable HTML. Custom medicines are marked **Medicine not assessed**; edited questions and notes are labeled as your writing. Curated source links and caveats travel with their topics. An absent topic does not establish that genetics is irrelevant.
 - File-quality checks, chromosome row counts, declared genome build and strand, no-calls, duplicate markers, and an original-byte SHA-256 digest.
 - One gated **SLCO1B1 rs4149056 observation**, or a specific reason the tool cannot report it. Build 37/38, forward strand, exact coordinate, valid alleles, and a unique called row must agree.
 - A separate source-backed DNA discussion report, with the original filename and full genotype table excluded.
@@ -38,7 +39,7 @@ The checker does not call star alleles, diplotypes, phenotypes, CYP2D6, HLA, cop
 
 ## Privacy and medical scope
 
-Raw DNA is read and parsed in a worker that is terminated after analysis or cancellation. Only aggregate quality checks and the narrow supported finding reach the interface. No analytics, accounts, localStorage, sessionStorage, IndexedDB, or external API is used. Withdrawing consent clears the derived DNA result. Reset cannot delete your original file or a downloaded report. Downloads contain sensitive findings or selected learning topics; store and share them deliberately. Browser extensions, a compromised device, or a modified app are outside these software guarantees.
+Raw DNA is read and parsed in a worker that is terminated after analysis or cancellation. Only aggregate quality checks and the narrow supported finding reach the interface. No analytics, accounts, localStorage, sessionStorage, IndexedDB, or external API is used. Questions, notes, and unsaved drafts stay in this tab's memory until you copy or download them; clearing the list or leaving/reloading the page removes that in-app writing. Withdrawing consent clears the derived DNA result. Reset cannot delete your original file, clipboard contents, or downloaded reports. Copies can contain sensitive findings or personal writing; store and share them deliberately. Browser extensions, a compromised device, or a modified app are outside these software guarantees.
 
 This app provides educational exploration and discussion support. It has no clinical validation or regulatory clearance. It does not diagnose a condition, predict individual medication response, or recommend a dose or treatment change. Clinical medication decisions require qualified professional interpretation and appropriate confirmation. Medical content and DPYD updates need continued qualified review.
 
@@ -55,10 +56,11 @@ npm test
 npm run test:browser
 npm run test:experience
 npm run test:design
+npm run test:appointment
 npm run build
 ```
 
-The browser checks exercise import, technical abstention, consent, cancellation, exports, medication search, checklist limits, responsive reflow, and requests/storage in Chromium and Playwright WebKit. WebKit is not a native iPhone or Safari-device test. Synthetic fixtures test software behavior; they do not establish clinical accuracy or real-user comprehension.
+The browser checks exercise import, technical abstention, consent, cancellation, exports, medication search, worksheet editing and ordering, combined question limits, clipboard denial recovery, responsive reflow, and requests/storage in Chromium and Playwright WebKit. The appointment suite also checks a real Chromium clipboard write/read. WebKit is not a native iPhone or Safari-device test. Synthetic fixtures test software behavior; they do not establish clinical accuracy or real-user comprehension.
 
 Keep the default page under 220 rendered words. Evidence, file guidance, and technical checks open on demand; consent, the primary finding, source links, and a short educational boundary remain visible in their relevant flows. `test:design` checks this presentation and its disclosures in both browser engines.
 
@@ -74,7 +76,7 @@ npm run deploy
 
 Deployment uses the pinned Wrangler version and the `genemachine` Worker name in `wrangler.jsonc`. Review the account and name before deploying a fork. No custom domain is configured. The deployed site still performs DNA parsing inside the visitor's browser.
 
-To run the same synthetic experience checks against a deployed HTTPS origin, set `GENEMACHINE_TEST_ORIGIN` to that origin and run `npm run test:experience`. This checks the live worker, downloads, security headers, request origins, browser storage, mobile reflow, and blocked upload methods in both browser engines.
+To run the synthetic checks against a deployed HTTPS origin, set `GENEMACHINE_TEST_ORIGIN` to that origin and run `npm run test:experience`, `npm run test:design`, or `npm run test:appointment`. These check the live worker, worksheet, downloads, security headers, request origins, browser storage, mobile reflow, and blocked upload methods in both browser engines.
 
 ## Install the Agent Skill
 

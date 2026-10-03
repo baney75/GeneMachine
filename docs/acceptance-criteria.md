@@ -1,6 +1,15 @@
 # GeneMachine consumer PGx candidate acceptance criteria
 
-Frozen for the September 6, 2026 candidate. These are product gates, not a claim of clinical validation or award eligibility.
+The DNA criteria below were frozen for the September 6, 2026 candidate. The appointment worksheet criteria were added October 3. These are product gates, not a claim of clinical validation or award eligibility.
+
+## Appointment worksheet
+
+- A person without DNA can save an editable question about any medicine. An unmatched search offers that path without implying an absence of genetic evidence.
+- Curated and custom entries share a five-question limit. Editing and priority changes preserve questions and notes. Invalid or unsaved drafts cannot silently enter an export.
+- User writing is labeled separately from curated source material. Custom medicines receive no inferred genes, sources, or assessment. Existing topic caveats and update notices survive both exports.
+- HTML escapes arbitrary input; plain-text copying works on explicit action and clipboard denial offers a selectable fallback.
+- Clear and page exit remove saved questions, draft fields, and copy fallback from the app. No personal writing enters requests, browser storage, or cookies. Existing downloaded/clipboard copies remain outside reset.
+- Default content stays below 220 rendered words. Editor, list, and export reflow at 320 and 390 pixels; keyboard users can edit, cancel, reorder, remove, and recover focus.
 
 ## Journey
 

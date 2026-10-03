@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Explore seven gene–medicine topics, collect appointment questions, or check one marker in a DNA file inside your browser.">
+    <meta name="description" content="Explore seven gene–medicine topics, write appointment questions for any medicine, or check one marker in a DNA file inside your browser.">
     <meta name="theme-color" content="#09111f">
     <meta property="og:title" content="GeneMachine: genes, medicines, and better questions">
     <meta property="og:description" content="An educational genetics and medicine tool. Raw DNA files are processed locally in the browser.">
@@ -49,8 +49,13 @@
           </div>
 
           <div id="library-empty" class="library-empty" hidden>
-            <strong>No topics match.</strong>
-            <p>Try a generic name or a gene symbol. A missing topic only means this small library does not cover it, not that genetics is irrelevant.</p>
+            <strong>No library topic. Medicine not assessed.</strong>
+            <p>This small library does not cover it. That does not mean genetics is irrelevant. Try a generic name or gene, or write your own question.</p>
+            <button id="library-write-question" class="button button-quiet library-write" type="button" aria-controls="question-editor">
+              <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M10 4v12M4 10h12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <span>Write a question <span class="library-write-about">about “<span id="library-write-name"></span>”</span></span>
+            </button>
+            <p id="library-full" class="library-full" hidden>Your list is full. Save, cancel, or remove a question to write another.</p>
           </div>
 
           <div id="medicine-grid" class="medicine-grid"></div>
@@ -71,15 +76,59 @@
           <section id="question-tray" class="card question-tray" aria-labelledby="question-tray-title">
             <div class="card-head">
               <h2 id="question-tray-title">Your questions</h2>
-              <span id="question-count" class="count">0 of 5 topics</span>
+              <span id="question-count" class="count">0 of 5 questions</span>
             </div>
             <ol id="question-list" class="question-list"></ol>
+            <button id="question-new" class="write-button" type="button" aria-controls="question-editor" aria-expanded="false">
+              <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M10 4v12M4 10h12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Write a question
+            </button>
+
+            <div id="question-editor" class="question-editor" role="group" aria-labelledby="editor-title" aria-describedby="editor-context" hidden>
+              <div class="editor-head">
+                <h3 id="editor-title">Write a question</h3>
+                <span id="editor-provenance" class="provenance is-custom">Medicine not assessed</span>
+              </div>
+              <p id="editor-context" class="editor-context"></p>
+              <div class="field" id="entry-medicine-field">
+                <label for="entry-medicine">Medicine or topic</label>
+                <input id="entry-medicine" type="text" autocomplete="off" spellcheck="false" aria-describedby="entry-medicine-count entry-error">
+                <span id="entry-medicine-count" class="field-count">0/120</span>
+              </div>
+              <div class="field">
+                <div class="field-row">
+                  <label for="entry-question">Question</label>
+                  <button id="entry-restore" class="text-button" type="button" hidden>Use suggested</button>
+                </div>
+                <textarea id="entry-question" rows="4" aria-describedby="entry-question-count entry-error"></textarea>
+                <span id="entry-question-count" class="field-count">0/600</span>
+              </div>
+              <button id="entry-notes-toggle" class="text-button" type="button" aria-controls="entry-notes-field" aria-expanded="false">Add notes (optional)</button>
+              <div class="field" id="entry-notes-field" hidden>
+                <label for="entry-notes">Notes <span class="field-optional">optional</span></label>
+                <textarea id="entry-notes" rows="3" aria-describedby="entry-notes-help entry-error"></textarea>
+                <span class="field-help"><span id="entry-notes-help">Included when you copy or download.</span><span id="entry-notes-count" class="field-count">0/1200</span></span>
+              </div>
+              <p id="entry-error" class="entry-error" role="alert" hidden></p>
+              <div class="editor-actions">
+                <button id="entry-save" class="button button-primary" type="button">Save</button>
+                <button id="entry-cancel" class="button button-quiet" type="button">Cancel</button>
+              </div>
+            </div>
+
+            <p id="question-note" class="tray-note" hidden></p>
             <div class="tray-actions">
               <button id="question-export" class="button button-primary" type="button" disabled>
                 <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M10 3v9m-4-4 4 4 4-4M4 16h12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 Download list
               </button>
+              <button id="question-copy" class="button button-quiet" type="button" disabled>Copy questions</button>
               <button id="question-clear" class="button button-quiet" type="button" disabled>Clear</button>
+            </div>
+            <div id="copy-fallback" class="copy-fallback" hidden>
+              <label for="copy-text">Copying was blocked. Select this text and copy it yourself.</label>
+              <textarea id="copy-text" rows="8" readonly spellcheck="false"></textarea>
+              <button id="copy-close" class="button button-quiet" type="button">Hide text</button>
             </div>
             <p id="question-status" class="status-line" role="status"></p>
           </section>
@@ -256,7 +305,8 @@
               <li>No account, upload, analytics, or browser storage. The file is parsed in this tab's memory.</li>
               <li>After parsing, the analysis worker is terminated. The derived result stays in the tab until you clear it or close the tab.</li>
               <li>Clear removes the result from the page, not your original file or anything you downloaded.</li>
-              <li>Reports and question lists are HTML files saved to your device. The report leaves out the filename and raw rows but includes the derived observation. Treat it like any health document.</li>
+              <li>Questions and notes you write stay in this tab's memory until you clear the list or close the tab. Nothing is saved for later.</li>
+              <li>Reports and question lists are HTML files saved to your device; Copy questions puts the list, including your notes, on your clipboard. The report leaves out the filename and raw rows but includes the derived observation. Treat these like any health document.</li>
               <li>Extensions, shared accounts, backups, and synced folders can expose files. Use a private device you trust.</li>
             </ul>
           </div>
