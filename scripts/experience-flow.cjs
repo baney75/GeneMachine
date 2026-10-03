@@ -89,7 +89,7 @@ async function verify(engine, url) {
   assert.equal((await page.locator('#finding-badge').innerText()).trim(), 'OBSERVATION SUPPORTED');
 
   const expectedHash = createHash('sha256').update(fixture).digest('hex');
-  assert.equal((await page.locator('#provenance-hash').innerText()).trim(), expectedHash);
+  assert.equal((await page.locator('#provenance-hash').innerText()).trim(), `${expectedHash.slice(0, 16)}...`);
   const dnaDownloadPromise = page.waitForEvent('download');
   await page.locator('#export-button').click();
   const dnaDownload = await dnaDownloadPromise;

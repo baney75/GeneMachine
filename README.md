@@ -8,6 +8,10 @@ You can use the medicine library without a DNA file, account, subscription, or p
 
 ## Start here
 
+**[Open GeneMachine](https://genemachine.magnus-b37.workers.dev/)** to use the educational app in your browser. No installation is required. For the source-backed product evaluation, [read the published evaluation](https://genemachine.magnus-b37.workers.dev/docs/product-evaluation.html).
+
+To run your own local copy:
+
 Install [Node.js](https://nodejs.org/) 22 or later and Git, then:
 
 ```bash
