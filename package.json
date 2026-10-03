@@ -9,7 +9,8 @@
     "test:browser": "node scripts/browser-flow.cjs",
     "build": "node scripts/build.mjs",
     "deploy": "npm run build && wrangler deploy",
-    "test:experience": "node scripts/experience-flow.cjs"
+    "test:experience": "node scripts/experience-flow.cjs",
+    "test:design": "node scripts/minimal-flow.cjs"
   },
   "devDependencies": {
     "playwright": "^1.63.0",

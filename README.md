@@ -22,7 +22,7 @@ npm start
 
 Open **http://127.0.0.1:4173/**. The app requires no runtime packages or API keys. Search for `clopidogrel` or `CYP2D6`, open a topic, and choose **Add this question**. Build a list of up to five topics and download a printable appointment checklist. Open the downloaded HTML file in your browser to print or save as PDF.
 
-To see the DNA workflow without using anyone’s data, choose **Explore the synthetic example**. You should see **OBSERVATION SUPPORTED**, an explicit synthetic label, and a single rs4149056 observation with its limits. **Clear this DNA now** clears the displayed finding.
+To see the DNA workflow without using anyone’s data, choose **Try the synthetic example**. You should see **OBSERVATION SUPPORTED**, an explicit synthetic label, and a single rs4149056 observation with its limits. **Clear this DNA now** clears the displayed finding.
 
 For a private file, read the privacy explanation, consent to local-only processing, and choose an original `.txt`, `.tsv`, or `.csv` export. Extract ZIP files on your device first. See the official [23andMe](https://support.23andme.org/hc/en-us/articles/42965156401687-Accessing-Your-Raw-Genetic-Data) and [AncestryDNA](https://help.ancestry.com/hc/en-us/articles/53933317283603-Downloading-DNA-Data) instructions. No new kit is needed to use the library.
 
@@ -54,10 +54,13 @@ npx playwright install chromium webkit
 npm test
 npm run test:browser
 npm run test:experience
+npm run test:design
 npm run build
 ```
 
 The browser checks exercise import, technical abstention, consent, cancellation, exports, medication search, checklist limits, responsive reflow, and requests/storage in Chromium and Playwright WebKit. WebKit is not a native iPhone or Safari-device test. Synthetic fixtures test software behavior; they do not establish clinical accuracy or real-user comprehension.
+
+Keep the default page under 220 rendered words. Evidence, file guidance, and technical checks open on demand; consent, the primary finding, source links, and a short educational boundary remain visible in their relevant flows. `test:design` checks this presentation and its disclosures in both browser engines.
 
 `npm run build` produces `dist/`, containing only the static app, libraries, brand assets, synthetic example, and hosting rules. Serve it over HTTPS or localhost so workers and cryptographic hashing work. Preserve its folder structure; `/web/` is the app entry. Building is separate from deployment.
 

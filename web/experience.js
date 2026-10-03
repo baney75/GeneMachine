@@ -25,7 +25,7 @@ function sourceLink(title, url) {
 
 function renderLibrary() {
   const topics = searchMedicineTopics(search.value);
-  document.querySelector('#medicine-count').textContent = `${topics.length} of ${MEDICINE_TOPICS.length} learning topics`;
+  document.querySelector('#medicine-count').textContent = search.value.trim() ? `${topics.length} of ${MEDICINE_TOPICS.length}` : `${MEDICINE_TOPICS.length} topics`;
   document.querySelector('#library-empty').hidden = topics.length > 0;
   grid.replaceChildren(...topics.map(topic => {
     const card = node('button', 'medicine-card');
@@ -33,7 +33,8 @@ function renderLibrary() {
     card.dataset.topic = topic.id;
     card.setAttribute('aria-expanded', String(openTopic === topic.id));
     card.setAttribute('aria-controls', 'medicine-detail');
-    card.append(node('span', 'medicine-category', topic.category), node('strong', 'medicine-name', topic.name), node('span', 'medicine-genes', topic.genes.join(' · ')), node('span', 'medicine-description', topic.description), node('span', 'medicine-card-footer', selected.has(topic.id) ? 'In your question list' : 'Read evidence and questions'));
+    card.append(node('strong', 'medicine-name', topic.name), node('span', 'medicine-genes', topic.genes.join(' · ')));
+    if (selected.has(topic.id)) card.append(node('span', 'medicine-added', 'Added'));
     card.addEventListener('click', () => showTopic(topic.id));
     return card;
   }));
@@ -44,36 +45,38 @@ function showTopic(id) {
   openTopic = id;
   document.querySelector('#medicine-detail-title').textContent = topic.name;
   const body = document.querySelector('#medicine-detail-body');
-  const sections = [
+  const genes = node('p', 'topic-genes', topic.genes.join(' · '));
+  const sections = node('dl', 'topic-sections');
+  for (const [title, text] of [
     ['Why genetics comes up', topic.context],
     ['What this cannot tell you', topic.unknown],
-    ['A question for your care team', topic.question],
     ['What a clinical test could add', topic.testing],
-  ].map(([title, text]) => {
-    const section = node('section', 'topic-section');
-    section.append(node('h4', '', title), node('p', '', text));
-    return section;
-  });
+  ]) sections.append(node('dt', '', title), node('dd', '', text));
+  const evidence = node('details', 'more topic-evidence');
+  evidence.append(node('summary', '', 'Evidence and limits'), sections);
   const boundary = node('p', 'topic-boundary', `Learning only. DNA checker: ${topic.checker}. Do not change treatment from this topic.`);
   const sources = node('div', 'topic-sources');
-  sources.append(sourceLink(topic.source.title, topic.source.url), node('p', 'topic-reviewed', `Source checked ${LIBRARY_REVIEW_DATE}`));
-  if (topic.update) sources.append(node('p', '', topic.update.note), sourceLink('Read the CPIC update notice', topic.update.url));
+  sources.append(node('span', 'topic-sources-label', 'Source'), sourceLink(topic.source.title, topic.source.url), node('span', 'topic-reviewed', `checked ${LIBRARY_REVIEW_DATE}`));
+  if (topic.update) sources.append(node('p', 'topic-update', topic.update.note), sourceLink('Read the CPIC update notice', topic.update.url));
+  const question = node('div', 'topic-question');
+  question.append(node('span', 'topic-question-label', 'Ask your care team'), node('p', '', topic.question));
   const add = node('button', 'primary-button topic-add-button', selected.has(id) ? 'Added to your questions' : 'Add this question');
   add.type = 'button';
   add.disabled = selected.has(id);
   add.addEventListener('click', () => {
     if (selected.size >= MAX_QUESTIONS) {
-      questionStatus.textContent = 'Your list has five topics. Remove one before adding another.';
+      questionStatus.textContent = 'Your list has five topics. Remove one first.';
       return;
     }
     selected.add(id);
-    questionStatus.textContent = `${topic.name} added to your questions.`;
+    questionStatus.textContent = `${topic.name} added.`;
     renderQuestions();
     renderLibrary();
     add.textContent = 'Added to your questions';
     add.disabled = true;
   });
-  body.replaceChildren(boundary, ...sections, sources, add);
+  question.append(add);
+  body.replaceChildren(genes, question, sources, boundary, evidence);
   detail.hidden = false;
   renderLibrary();
   document.querySelector('#medicine-detail-title').focus({ preventScroll: true });
@@ -115,7 +118,7 @@ function renderQuestions() {
     item.append(text, remove);
     return item;
   }));
-  if (!selected.size) list.append(node('li', 'empty-state', 'Open a topic and add a question. No DNA file is needed.'));
+  if (!selected.size) list.append(node('li', 'empty-state', 'Pick a medicine to add its question.'));
   document.querySelector('#question-export').disabled = selected.size === 0;
   document.querySelector('#question-clear').disabled = selected.size === 0;
   if (checklistUrl) { URL.revokeObjectURL(checklistUrl); checklistUrl = null; }
@@ -126,7 +129,7 @@ document.querySelector('#medicine-close').addEventListener('click', () => closeT
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && openTopic) closeTopic(true); });
 document.querySelector('#question-clear').addEventListener('click', () => {
   selected.clear();
-  questionStatus.textContent = 'Your question list is cleared. Downloaded copies remain on your device.';
+  questionStatus.textContent = 'List cleared. Downloaded copies stay on your device.';
   renderQuestions();
   renderLibrary();
   if (openTopic) {
@@ -142,7 +145,7 @@ document.querySelector('#question-export').addEventListener('click', () => {
   download.href = checklistUrl;
   download.download = 'genemachine-appointment-questions.html';
   download.click();
-  questionStatus.textContent = 'Checklist downloaded. It contains the topics you chose; store and share it deliberately. Open it to print or save as PDF.';
+  questionStatus.textContent = 'Saved to this device. Open it to print or save as PDF.';
 });
 
 window.addEventListener('pagehide', () => {
