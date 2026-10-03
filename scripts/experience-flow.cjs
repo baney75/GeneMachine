@@ -87,6 +87,9 @@ async function verify(engine, url) {
   await page.locator('#file-input').setInputFiles({ name: 'private-person.txt', mimeType: 'text/plain', buffer: fixture });
   await page.locator('#results:not([hidden])').waitFor();
   assert.equal((await page.locator('#finding-badge').innerText()).trim(), 'OBSERVATION SUPPORTED');
+  assert.equal(await page.locator('#evidence-details').evaluate(element => element.open), false);
+  assert.equal(await page.locator('#result-details').evaluate(element => element.open), false);
+  await page.locator('#result-details > summary').click();
 
   const expectedHash = createHash('sha256').update(fixture).digest('hex');
   assert.equal((await page.locator('#provenance-hash').innerText()).trim(), `${expectedHash.slice(0, 16)}...`);

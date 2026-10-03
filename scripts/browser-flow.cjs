@@ -78,6 +78,10 @@ async function verifyBrowser(browserType, baseUrl) {
     await page.locator("#file-input").setInputFiles(path.join(root, "samples", "reference", fileName));
     await page.locator("#results:not([hidden])").waitFor();
     assert.equal((await page.locator("#finding-badge").innerText()).trim(), "OBSERVATION SUPPORTED", `${browserType.name()} ${fileName}`);
+    for (const id of ['evidence-details', 'result-details']) {
+      const disclosure = page.locator(`#${id}`);
+      if (!(await disclosure.evaluate(element => element.open))) await disclosure.locator('summary').first().click();
+    }
     assert.match(await page.locator("#evidence-ladder").innerText(), /rs4149056 T\/C/, `${browserType.name()} ${fileName}`);
   }
 
