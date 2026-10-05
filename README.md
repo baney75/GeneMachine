@@ -4,6 +4,10 @@
 
 GeneMachine is a free educational browser app and an Agent Skill for genomic research. The app helps you understand established gene–medicine evidence, prepare questions for a care team, and inspect a compatible consumer DNA export on your own device.
 
+![GeneMachine medicine library and appointment questions](assets/app.jpg)
+
+Built with JavaScript and Cloudflare Workers.
+
 You can use the medicine library without a DNA file, account, subscription, or paid kit. Optional DNA checking runs in a local Web Worker. Genetic data is never sent to an AI service by the browser app.
 
 ## Start here
