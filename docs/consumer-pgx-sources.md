@@ -58,6 +58,8 @@ Two CPIC Level A topics were added after checking the CPIC API pair table (`api.
 
 Every topic now carries a one-paragraph FDA labeling summary drawn from the [FDA Table of Pharmacogenetic Associations](https://www.fda.gov/medical-devices/precision-medicine/table-pharmacogenetic-associations) (content current as of 09/10/2026) and, for boxed warnings and contraindications, the [FDA Table of Pharmacogenomic Biomarkers in Drug Labeling](https://www.fda.gov/drugs/science-and-research-drugs/table-pharmacogenomic-biomarkers-drug-labeling). The summaries name the effect and the label section. They omit dose numbers on purpose.
 
+Two boxed-warning statements are deliberately narrow. The succinylcholine boxed warning is mainly about hyperkalemic rhabdomyolysis, sudden high potassium, and cardiac arrest in children; its only malignant hyperthermia line tells clinicians to treat malignant hyperthermia if its signs appear, and it does not name RYR1 or CACNA1S. The RYR1/CACNA1S contraindication sits in the Contraindications section of the desflurane, isoflurane, sevoflurane, and succinylcholine labels. For capecitabine, the brand-name Xeloda label discusses DPYD testing in a boxed warning, but some generic capecitabine labels (for example Northstar, July 2026) still box only the warfarin interaction, so the topic names Xeloda rather than every capecitabine label.
+
 The opioid source title now uses 2021, the print year CPIC lists for PMID 33387367 (Crews KR et al., *Clin Pharmacol Ther.* 2021;110(4):888–896).
 
 These additions are educational and need review by a pharmacist or physician before any clinical use. They do not add DNA-checker capability.
