@@ -45,9 +45,24 @@ The raw file stays in browser memory. No raw row, original filename, derived gen
 
 ## Medicine learning library, October 2, 2026
 
-`lib/medicine-library.mjs` holds the seven educational topics and their primary CPIC sources, independently researched on October 2. These general topics are not DNA interpretations and do not recommend testing for everyone. The appointment worksheet includes the chosen questions, limits, source links, and review date. Optional custom medicine names, edited questions, and notes are held in browser memory until the user copies or downloads them; they are never submitted to a server or interpreted as clinical evidence.
+`lib/medicine-library.mjs` held the seven original educational topics and their primary CPIC sources, independently researched on October 2. These general topics are not DNA interpretations and do not recommend testing for everyone. The appointment worksheet includes the chosen questions, limits, source links, and review date. Optional custom medicine names, edited questions, and notes are held in browser memory until the user copies or downloads them; they are never submitted to a server or interpreted as clinical evidence.
 
 The thiopurine topic uses the 2025 update published in 2026. The DPYD topic includes CPIC's July 2026 pending-update notice and requires review when the new guideline is published. Static content does not refresh itself.
+
+## Library expansion and FDA labeling, October 9, 2026
+
+Two CPIC Level A topics were added after checking the CPIC API pair table (`api.cpicpgx.org/v1/pair_view`, `cpiclevel = A`) on October 9:
+
+- **RYR1 and CACNA1S with potent volatile anesthetics and succinylcholine.** Gonsalves SG et al. CPIC guideline for the use of potent volatile anesthetic agents and succinylcholine in the context of RYR1 or CACNA1S genotypes. *Clin Pharmacol Ther.* 2019;105(6):1338–1344. PMID 30499100, doi:10.1002/cpt.1319. Statements used: triggering agents are relatively contraindicated and only non-triggering anesthesia should be used in anyone thought to have MHS; a negative result or a variant outside the 50 listed must be interpreted with personal and family history; most susceptible people are phenotypically normal.
+- **CYP2C9 with NSAIDs.** Theken KN et al. CPIC guideline for CYP2C9 and nonsteroidal anti-inflammatory drugs. *Clin Pharmacol Ther.* 2020;108(2):191–200. PMID 32189324, doi:10.1002/cpt.1830. Statements used: celecoxib, flurbiprofen, ibuprofen, lornoxicam, meloxicam, piroxicam, and tenoxicam carry recommendations; aceclofenac, aspirin, diclofenac, indomethacin, lumiracoxib, metamizole, nabumetone, and naproxen have no recommendation; NSAIDs can cause serious gastrointestinal, renal, and cardiovascular adverse events.
+
+Every topic now carries a one-paragraph FDA labeling summary drawn from the [FDA Table of Pharmacogenetic Associations](https://www.fda.gov/medical-devices/precision-medicine/table-pharmacogenetic-associations) (content current as of 09/10/2026) and, for boxed warnings and contraindications, the [FDA Table of Pharmacogenomic Biomarkers in Drug Labeling](https://www.fda.gov/drugs/science-and-research-drugs/table-pharmacogenomic-biomarkers-drug-labeling). The summaries name the effect and the label section. They omit dose numbers on purpose.
+
+Two boxed-warning statements are deliberately narrow. The succinylcholine boxed warning is mainly about hyperkalemic rhabdomyolysis, sudden high potassium, and cardiac arrest in children; its only malignant hyperthermia line tells clinicians to treat malignant hyperthermia if its signs appear, and it does not name RYR1 or CACNA1S. The RYR1/CACNA1S contraindication sits in the Contraindications section of the desflurane, isoflurane, sevoflurane, and succinylcholine labels. For capecitabine, the brand-name Xeloda label discusses DPYD testing in a boxed warning, but some generic capecitabine labels (for example Northstar, July 2026) still box only the warfarin interaction, so the topic names Xeloda rather than every capecitabine label.
+
+The opioid source title now uses 2021, the print year CPIC lists for PMID 33387367 (Crews KR et al., *Clin Pharmacol Ther.* 2021;110(4):888–896).
+
+These additions are educational and need review by a pharmacist or physician before any clinical use. They do not add DNA-checker capability.
 
 ## Appointment preparation, October 3, 2026
 

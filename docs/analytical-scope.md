@@ -40,7 +40,7 @@ The browser app is therefore appropriate only for local educational exploration 
 
 ## October 2 educational product update
 
-The no-DNA medicine library and appointment checklist offer general learning only. They do not inspect a genome or make an individualized clinical finding. Seven topics have dated CPIC links; the DPYD update warning is explicit. These additions do not add phenotype or drug-response capability.
+The no-DNA medicine library and appointment checklist offer general learning only. They do not inspect a genome or make an individualized clinical finding. Nine topics have dated CPIC links and FDA labeling summaries; the DPYD update warning is explicit. These additions do not add phenotype or drug-response capability.
 
 Browser import now runs in a cancellable worker. The worker releases raw text and the complete genotype table when terminated; only aggregate QC and the gated finding return to the interface. Original bytes, including BOM and CRLF, are hashed before decoding. Withdrawing consent cancels analysis and clears the derived DNA result. The original file and prior downloads are unaffected.
 

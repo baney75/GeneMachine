@@ -684,6 +684,7 @@ ul, ol { padding: 0; }
 .details-body > .evidence-ladder,
 .details-body > .discussion-prompt { margin-top: 0; padding-top: 0; }
 .topic-evidence .topic-sections { margin-top: 10px; }
+.topic-fda-sources { margin-top: 10px; color: var(--muted); font-size: 0.8rem; overflow-wrap: anywhere; }
 .more-body .link-list { list-style: none; padding-left: 0; gap: 4px; }
 
 /* Help */

@@ -325,7 +325,7 @@ async function verifyBrowser(browserType, baseUrl) {
   const baseUrl = `http://127.0.0.1:${address.port}`;
   try {
     const results = [];
-    for (const browserType of [chromium, webkit]) results.push(await verifyBrowser(browserType, baseUrl));
+    for (const browserType of [chromium, webkit].filter(type => !process.env.GENEMACHINE_ENGINES || process.env.GENEMACHINE_ENGINES.split(",").includes(type.name()))) results.push(await verifyBrowser(browserType, baseUrl));
     console.log(JSON.stringify(results, null, 2));
   } finally {
     await new Promise((resolve) => server.close(resolve));

@@ -207,7 +207,7 @@ async function check(engine, origin) {
   } else ({ child, url } = await startServer());
   try {
     const results = [];
-    for (const engine of [chromium, webkit]) results.push(await check(engine, url));
+    for (const engine of [chromium, webkit].filter(type => !process.env.GENEMACHINE_ENGINES || process.env.GENEMACHINE_ENGINES.split(",").includes(type.name()))) results.push(await check(engine, url));
     console.log(JSON.stringify(results, null, 2));
   } finally { child?.kill(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
