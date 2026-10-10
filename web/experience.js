@@ -135,7 +135,7 @@ function showTopic(id) {
   fdaLinks.append('FDA sources: ');
   FDA_SOURCES.forEach((source, index) => fdaLinks.append(...(index ? ['; '] : []), sourceLink(source.title, source.url)));
   evidence.append(node('summary', '', 'Evidence and limits'), sections, fdaLinks);
-  const boundary = node('p', 'topic-boundary', `Learning only. DNA checker: ${topic.checker}. Do not change treatment from this topic.`);
+  const boundary = node('p', 'topic-boundary', `Learning only. ${topic.checker}. Do not change treatment from this topic.`);
   const sources = node('div', 'topic-sources');
   sources.append(node('span', 'topic-sources-label', 'Sources'), sourceLink(topic.source.title, topic.source.url), sourceLink('FDA labeling', FDA_LABELING_SOURCE.url), node('span', 'topic-reviewed', `checked ${LIBRARY_REVIEW_DATE}`));
   if (topic.update) sources.append(node('p', 'topic-update', topic.update.note), sourceLink('Read the CPIC update notice', topic.update.url));
