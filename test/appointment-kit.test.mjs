@@ -62,6 +62,7 @@ test('custom-only worksheet makes no library assessment or source claim', () => 
     assert.match(output, /No gene, test, or source is inferred/);
     assert.doesNotMatch(output, /Library sources checked/);
     assert.doesNotMatch(output, /CPIC/);
+    assert.doesNotMatch(output, /FDA/);
   }
   assert.match(html, /<h2>Unlisted medicine<\/h2>/);
 });
@@ -97,6 +98,8 @@ test('all curated warnings, testing guidance, primary sources, and updates survi
       assert.ok(output.includes(topic.testing));
       assert.ok(output.includes(topic.source.title));
       assert.ok(output.includes(topic.source.url));
+      assert.ok(output.includes(topic.fda), `${topic.id} FDA labeling summary`);
+      assert.ok(output.includes('https://www.fda.gov/medical-devices/precision-medicine/table-pharmacogenetic-associations'));
       if (topic.update) {
         assert.ok(output.includes(topic.update.note));
         assert.ok(output.includes(topic.update.url));

@@ -39,7 +39,7 @@ async function check(engine, origin) {
     const page = await browser.newPage({ reducedMotion: 'reduce' });
     await page.goto(origin);
     await page.locator('.medicine-card').first().waitFor();
-    assert.equal(await page.locator('.medicine-card').count(), 7);
+    assert.equal(await page.locator('.medicine-card').count(), 9);
     assert.equal(await page.locator('#medicine-detail').isHidden(), true);
     assert.equal(await page.locator('#results').isHidden(), true);
     const layouts = [];
@@ -90,7 +90,7 @@ async function check(engine, origin) {
   } else ({ child, url } = await localServer());
   try {
     const results = [];
-    for (const engine of [chromium, webkit]) results.push(await check(engine, url));
+    for (const engine of [chromium, webkit].filter(type => !process.env.GENEMACHINE_ENGINES || process.env.GENEMACHINE_ENGINES.split(",").includes(type.name()))) results.push(await check(engine, url));
     console.log(JSON.stringify(results, null, 2));
   } finally { child?.kill(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -27,7 +27,7 @@ async function verify(engine, url) {
   await page.goto(url);
   assert.match(page.url(), /\/web\/$/);
   await page.locator('.medicine-card').first().waitFor();
-  assert.equal(await page.locator('.medicine-card').count(), 7);
+  assert.equal(await page.locator('.medicine-card').count(), 9);
   assert.equal(await page.locator('#consent-checkbox').isChecked(), false);
 
   await page.locator('#medicine-search').fill('Plavix');
@@ -158,7 +158,7 @@ async function verify(engine, url) {
   assert.equal((await page.request.post(url + '/web/', { data: 'no-upload' })).status(), 405);
   await page.locator('#reset-button').click();
   assert.equal(await page.locator('#results').isHidden(), true);
-  return { engine: engine.name(), topics: 7, checklistLimit: 5, workerCancel: 'passed', consentRevocation: 'passed', sameOriginGetOnly: true, layouts, errors };
+  return { engine: engine.name(), topics: 9, checklistLimit: 5, workerCancel: 'passed', consentRevocation: 'passed', sameOriginGetOnly: true, layouts, errors };
   } finally { await browser.close(); }
 }
 
@@ -173,7 +173,7 @@ async function verify(engine, url) {
   }
   try {
     const results = [];
-    for (const engine of [chromium, webkit]) results.push(await verify(engine, url));
+    for (const engine of [chromium, webkit].filter(type => !process.env.GENEMACHINE_ENGINES || process.env.GENEMACHINE_ENGINES.split(",").includes(type.name()))) results.push(await verify(engine, url));
     console.log(JSON.stringify(results, null, 2));
   } finally { child?.kill(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

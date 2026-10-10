@@ -1,4 +1,4 @@
-import { MEDICINE_TOPICS, MAX_QUESTIONS, LIBRARY_REVIEW_DATE, getMedicineTopic, searchMedicineTopics } from '../lib/medicine-library.mjs';
+import { MEDICINE_TOPICS, MAX_QUESTIONS, LIBRARY_REVIEW_DATE, FDA_SOURCES, getMedicineTopic, searchMedicineTopics } from '../lib/medicine-library.mjs';
 import { MAX_MEDICINE_LENGTH, MAX_QUESTION_LENGTH, MAX_NOTE_LENGTH, createTopicEntry, createCustomEntry, normalizeAppointmentEntries, createAppointmentHtml, createAppointmentText } from '../lib/appointment-kit.mjs';
 
 const $ = selector => document.querySelector(selector);
@@ -128,12 +128,16 @@ function showTopic(id) {
     ['Why genetics comes up', topic.context],
     ['What this cannot tell you', topic.unknown],
     ['What a clinical test could add', topic.testing],
+    ['What FDA labeling says', topic.fda],
   ]) sections.append(node('dt', '', title), node('dd', '', text));
   const evidence = node('details', 'more topic-evidence');
-  evidence.append(node('summary', '', 'Evidence and limits'), sections);
+  const fdaLinks = node('p', 'topic-fda-sources');
+  fdaLinks.append('FDA sources: ');
+  FDA_SOURCES.forEach((source, index) => fdaLinks.append(...(index ? ['; '] : []), sourceLink(source.title, source.url)));
+  evidence.append(node('summary', '', 'Evidence and limits'), sections, fdaLinks);
   const boundary = node('p', 'topic-boundary', `Learning only. DNA checker: ${topic.checker}. Do not change treatment from this topic.`);
   const sources = node('div', 'topic-sources');
-  sources.append(node('span', 'topic-sources-label', 'Source'), sourceLink(topic.source.title, topic.source.url), node('span', 'topic-reviewed', `checked ${LIBRARY_REVIEW_DATE}`));
+  sources.append(node('span', 'topic-sources-label', 'Sources'), sourceLink(topic.source.title, topic.source.url), sourceLink('FDA labeling', FDA_SOURCES[0].url), node('span', 'topic-reviewed', `checked ${LIBRARY_REVIEW_DATE}`));
   if (topic.update) sources.append(node('p', 'topic-update', topic.update.note), sourceLink('Read the CPIC update notice', topic.update.url));
   const question = node('div', 'topic-question');
   const add = node('button', 'primary-button topic-add-button', 'Add this question');

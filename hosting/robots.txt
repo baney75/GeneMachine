@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /samples/
+
+Sitemap: https://genemachine.magnus-b37.workers.dev/sitemap.xml

@@ -32,7 +32,7 @@ For a private file, read the privacy explanation, consent to local-only processi
 
 ## What the app provides
 
-- Seven source-linked learning topics: statins, clopidogrel, thiopurines, fluorouracil/capecitabine, codeine/tramadol, warfarin, and tacrolimus. Search recognizes medicine names, several brand names, genes, and categories.
+- Nine source-linked learning topics, each a CPIC Level A gene–drug pair: statins, clopidogrel, thiopurines, fluorouracil/capecitabine, codeine/tramadol, warfarin, tacrolimus, inhaled anesthetics/succinylcholine (malignant hyperthermia), and NSAID pain relievers. Each topic cites its CPIC guideline and summarizes what FDA labeling says, without dose numbers. Search recognizes medicine names, several brand names, genes, and categories.
 - General evidence, individual unknowns, and testing questions. Library topics are educational; they are never matched to your DNA or presented as your prescriptions.
 - An editable appointment worksheet for any medicine: five questions, personal notes, priority ordering, plain-text copy, and printable HTML. Custom medicines are marked **Medicine not assessed**; edited questions and notes are labeled as your writing. Curated source links and caveats travel with their topics. An absent topic does not establish that genetics is irrelevant.
 - File-quality checks, chromosome row counts, declared genome build and strand, no-calls, duplicate markers, and an original-byte SHA-256 digest.
@@ -62,6 +62,9 @@ npm run test:experience
 npm run test:design
 npm run test:appointment
 npm run build
+
+# Linux hosts without WebKit system libraries can run the Chromium half alone:
+GENEMACHINE_ENGINES=chromium npm run test:design
 ```
 
 The browser checks exercise import, technical abstention, consent, cancellation, exports, medication search, worksheet editing and ordering, combined question limits, clipboard denial recovery, responsive reflow, and requests/storage in Chromium and Playwright WebKit. The appointment suite also checks a real Chromium clipboard write/read. WebKit is not a native iPhone or Safari-device test. Synthetic fixtures test software behavior; they do not establish clinical accuracy or real-user comprehension.
