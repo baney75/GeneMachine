@@ -100,3 +100,9 @@ Different input classes require different tools and validation. The browser impo
 Use synthetic fixtures only. Do not submit a real genome, report, identifying filename, private record, or credential in an issue or pull request. Medical claims need dated primary sources. Tests must preserve unknown values rather than inventing reference calls. See [SECURITY.md](SECURITY.md).
 
 Licensed under Apache-2.0. Copyright 2026 Donovan Baney and contributors.
+
+## Sponsors
+
+<!-- sponsors:start -->
+No sponsors yet. [Sponsor on GitHub](https://github.com/sponsors/baney75) and your name appears here automatically.
+<!-- sponsors:end -->
