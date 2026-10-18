@@ -7,7 +7,7 @@ A free educational browser app and Agent Skill that shows gene-medicine evidence
 - Install: Node.js 22+, then `npm ci`
 - Check: `npm test`
 - Live proof: for a change someone sees on screen, run `npm start`, open http://127.0.0.1:4173/, and repeat the gesture (search a medicine, add a question, try the synthetic example). Browser suites: `npm run test:browser`, `npm run test:design`, `npm run test:appointment`, `npm run test:experience` (need `npx playwright install chromium webkit`). If you can't run them, report "untested live" and give the steps.
-- Deploy: `npm run deploy` (build, then `wrangler deploy`), then read it back and fail on a non-2xx status: `curl -fsS https://genemachine.magnus-b37.workers.dev/web/ | grep -q 'GeneMachine: pharmacogenomics guide'`. The root redirects to `/web/` (`hosting/_redirects`). Deploy only when asked.
+- Deploy: `npm run deploy` (build, then `wrangler deploy`). Read it back by comparing live files with the build in `dist/`; this exits nonzero on a stale or failed deploy: `t=$(mktemp -d) && B=https://genemachine.magnus-b37.workers.dev/web && curl -fsS $B/ -o $t/i && cmp $t/i dist/web/index.html && curl -fsS $B/app.js -o $t/a && cmp $t/a dist/web/app.js && curl -fsS $B/styles.css -o $t/s && cmp $t/s dist/web/styles.css`. The root redirects to `/web/` (`hosting/_redirects`). Deploy only when asked.
 
 ## Brand
 
@@ -21,7 +21,7 @@ A free educational browser app and Agent Skill that shows gene-medicine evidence
 - `scripts/`: local server, build, and Playwright browser flows
 - `hosting/`: headers, redirects, robots.txt and sitemap.xml copied into `dist/`
 - `docs/`: analytical scope, source register, acceptance criteria, product evaluation
-- `samples/`: synthetic DNA fixtures only (see Hard limits)
+- `samples/`: synthetic DNA only: the public example and `samples/reference/` test fixtures (all synthetic; see Hard limits)
 - `assets/`: logo, wordmark and social images
 - `SKILL.md`: the Agent Skill procedure
 - `wrangler.jsonc`: Cloudflare Worker config
